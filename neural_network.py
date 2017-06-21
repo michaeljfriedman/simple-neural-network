@@ -90,6 +90,18 @@ class NeuralNetwork(object):
         '''
         return sigmoid(x) * (1 - sigmoid(x))
 
+    def feedforward(xv):
+        '''
+        Returns the output vector after feeding forward the input xv through
+        the network.
+        '''
+        av = xv
+        for l in layers[1:]:
+            # Compute activation vector at this layer
+            zv = l.W.dot(av) + l.bv
+            av = sigmoid(zv)
+        return av
+
     #---------------------------------------------------------------------------
 
     # Public methods
@@ -113,6 +125,17 @@ class NeuralNetwork(object):
         # Train over all examples
         for xv, y in examples:
             # Feedforward xv
+            av = feedforward(xv)
 
             # Backpropagate and adjust weights and biases for next iteration
-            pass
+            yv = np.zeros(shape(layers[self.L-1].n,))
+            yv[y] = 1
+            for l in layers[-1:1:-1]:
+                # Compute delta_W and delta_bv
+                # TODO: Implement backpropagation
+                delta_W = 0
+                delta_bv = 0
+
+                # Adjust W and bv by their deltas
+                l.W += self.eta * delta_W
+                l.bv += self.eta * delta_bv
