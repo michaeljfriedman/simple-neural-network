@@ -41,7 +41,7 @@ class NeuralNetwork(object):
 
     #---------------------------------------------------------------------------
 
-    def __init__(layers, eta=0.25):
+    def __init__(layers, eta=0.25, weights=None, biases=None):
         '''
         Initializes the NeuralNetwork given `layers`, a list of integers
         indicating the number of neurons in each layer of the network. (The
@@ -50,6 +50,12 @@ class NeuralNetwork(object):
         positive numbers, or an exception will be raised.
 
         Also optionally provide `eta`, the learning rate.
+
+        For testing purposes, also optionally provide `weights`, a list of
+        initial weight matrices between each pair of layers. Each matrix
+        corresponds to the weights applied to the *second* layer in the pair.
+        Similarly, provide `biases`, the corresponding list of initial bias
+        vectors.
         '''
         # Validate parameters
         for n in layers:
@@ -62,11 +68,13 @@ class NeuralNetwork(object):
 
         # Initialize weights arbitrarily. Each consecutive pair of layers
         # (prev/next layers) has a matrix of weights.
-        weights = [np.empty(shape=(layers[i], layers[i+1])) for i in range(0, len(layers)-1)]
+        if not weights:
+            weights = [np.empty(shape=(layers[i], layers[i+1])) for i in range(0, len(layers)-1)]
 
         # Initialize biases arbitrarily. Same principle as with weights, except
         # each pair of layers has a vector of biases.
-        biases = [np.empty(shape=(layers[i+1],)) for i in range(0, len(layers)-1)]
+        if not biases:
+            biases = [np.empty(shape=(layers[i+1],)) for i in range(0, len(layers)-1)]
 
         # Place info into list of Layer containers
         self.layers = [Layer(layers[0], None, None)] + [Layer(layers[i], weights[i-1], biases[i-1]) for i in range(1, len(layers))]
