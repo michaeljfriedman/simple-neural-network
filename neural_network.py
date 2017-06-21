@@ -139,3 +139,37 @@ class NeuralNetwork(object):
                 # Adjust W and bv by their deltas
                 l.W += self.eta * delta_W
                 l.bv += self.eta * delta_bv
+
+
+    def test(examples):
+        '''
+        Tests the network on the list `examples`, which has the same format as
+        the list provided to train(). Returns the accuracy rate.
+        '''
+        # Validate length of inputs/outputs in examples
+        for xv, _ in examples:
+            if len(xv.shape) != 1 and xv.shape != (self.layers[0].n,):
+                raise ValueError('Training inputs must be the same length as the number of inputs in the network')
+
+        # Test over all examples
+        num_correct = 0
+        for xv, y in examples:
+            y_test = evaluate(xv)
+            if y_test == y:
+                num_correct += 1
+        return float(num_correct) / float(len(examples))
+
+
+    def evaluate(xv):
+        '''
+        Returns the classification chosen by the network for input xv (the index
+        of the output with highest probability).
+        '''
+        yv = feedforward(xv)
+        max_index = 0
+        max_value = yv[0]
+        for i in range(0, yv.size):
+            if yv[i] > max_value:
+                max_value = yv[i]
+                max_index = i
+        return max_index
