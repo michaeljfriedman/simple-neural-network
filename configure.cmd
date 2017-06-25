@@ -4,36 +4,37 @@
 :: Script to automate installation of dependencies and other configuration of
 :: your environment for this project.
 
-:: Some preliminary configuration
 @echo off
-setlocal EnableDelayedExpansion
-set NL=^
-
-
-:: Note the two blank lines above are required to set the NL variable
 
 :: Check for help command
-set usage=usage:!NL!configure.cmd!NL!configure.cmd --help
+set usage0=usage:
+set usage1=configure.cmd
+set usage2=configure.cmd --help
 
 set help_message0=This script automates installation of dependencies and other configuration
-set help_message1=of your environment for the project!NL!
+set help_message1=of your environment for the project.
 set help_message2=Arguments
 set help_message3=--help          display this message
 
 if "%1" == "--help" (
-  echo %usage%
-  echo
+  echo %usage0%
+  echo %usage1%
+  echo %usage2%
+  echo.
   echo %help_message0%
   echo %help_message1%
+  echo.
   echo %help_message2%
   echo %help_message3%
-  exit
+  exit /b
 )
 
 :: Validate usage
 if not "%1" == "" (
-  echo %usage%
-  exit
+  echo %usage0%
+  echo %usage1%
+  echo %usage2%
+  exit /b
 )
 
 ::------------------------------------------------------------------------------

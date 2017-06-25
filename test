@@ -1,0 +1,14 @@
+#!/bin/bash
+# test
+# Author: Michael Friedman
+#
+# Runs all tests for the project.
+
+# Validate usage
+usage="./test"
+if [ $# -ne 0 ]; then
+  echo "$usage"
+  exit
+fi
+
+python -m unittest tests

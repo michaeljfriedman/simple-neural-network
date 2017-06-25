@@ -5,7 +5,7 @@ This is an implementation of the neural network algorithm described in [Michael 
 ### Quick start
 You can set up your environment from scratch to work on this project, with all dependencies and other configuration done, by first cloning the repository:
 ```
-git clone [repo url] && cd [repo]
+git clone https://github.com/michaeljfriedman/simple-neural-network.git && cd simple-neural-network
 ```
 and then running the provided `configure` script. (However, note that to use this script, you must have the following baseline software installed: Python 2.7, pip package manager, Python virtualenv) Run:
 ```

@@ -1,0 +1,50 @@
+#!/bin/bash
+# configure
+# Author: Michael Friedman
+#
+# Script to automate installation of dependencies and other configuration of
+# your environment for this project.
+
+# Check for help command
+# TODO: Modify these as necessary
+usage="usage:
+./configure
+./configure --help"
+help_message="This script automates installation of dependencies and other configuration
+of your environment for the project.
+
+Arguments
+--help          display this message"
+if [ $# -eq 1 ] && [ "$1" == "--help" ]; then
+  echo "$usage"
+  echo
+  echo "$help_message"
+  exit
+fi
+
+# Validate usage
+if [ $# -ne 0 ]; then
+  echo "$usage"
+  exit
+fi
+
+#-------------------------------------------------------------------------------
+
+# Configure environment
+
+# Install Python dependencies to virtual environment
+if [ ! -d "venv" ]; then
+  echo "----- Creating Python virtual environment -----"
+  virtualenv venv
+  echo "---- Done creating Python virtual environment -----"
+fi
+
+source venv/bin/activate
+
+echo "----- Installing Python packages -----"
+pip install numpy
+echo "----- Done installing Python packages -----"
+
+deactivate
+
+echo "Remember to activate the virtual environment with 'venv\Scripts\activate' to use the Python packages."
