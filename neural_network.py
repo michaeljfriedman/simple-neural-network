@@ -29,7 +29,7 @@ class NeuralNetwork(object):
         Container for attributes of each layer
         '''
 
-        def __init__(n, W, bv):
+        def __init__(self, n, W, bv):
             '''
             Sets attributes of this layer: `n` the number of neurons, `W` the
             matrix of weights coming *in* to this layer, `bv` the vector of
@@ -41,7 +41,7 @@ class NeuralNetwork(object):
 
     #---------------------------------------------------------------------------
 
-    def __init__(layers, eta=0.25, weights=None, biases=None):
+    def __init__(self, layers, eta=0.25, weights=None, biases=None):
         '''
         Initializes the NeuralNetwork given `layers`, a list of integers
         indicating the number of neurons in each layer of the network. (The
@@ -77,44 +77,46 @@ class NeuralNetwork(object):
             biases = [np.empty(shape=(layers[i+1],)) for i in range(0, len(layers)-1)]
 
         # Place info into list of Layer containers
-        self.layers = [Layer(layers[0], None, None)] + [Layer(layers[i], weights[i-1], biases[i-1]) for i in range(1, len(layers))]
+        self.layers = [NeuralNetwork.Layer(layers[0], None, None)] + [NeuralNetwork.Layer(layers[i], weights[i-1], biases[i-1]) for i in range(1, len(layers))]
 
 
     #---------------------------------------------------------------------------
 
     # Helper methods
 
+    @staticmethod
     def sigmoid(x):
         '''
         Returns a np array that applies the sigmoid function element-wise to the
         np array x.
         '''
-        return 1 / (1 + np.exp(x))
+        return 1 / (1 + np.exp(-x))
 
+    @staticmethod
     def sigmoid_prime(x):
         '''
         Returns a np array that applies the derivative of sigmoid element-wise
         to the np array x.
         '''
-        return sigmoid(x) * (1 - sigmoid(x))
+        return NeuralNetwork.sigmoid(x) * (1 - NeuralNetwork.sigmoid(x))
 
-    def feedforward(xv):
+    def feedforward(self, xv):
         '''
         Returns the output vector after feeding forward the input xv through
         the network.
         '''
         av = xv
-        for l in layers[1:]:
+        for l in self.layers[1:]:
             # Compute activation vector at this layer
             zv = l.W.dot(av) + l.bv
-            av = sigmoid(zv)
+            av = NeuralNetwork.sigmoid(zv)
         return av
 
     #---------------------------------------------------------------------------
 
     # Public methods
 
-    def train(examples):
+    def train(self, examples):
         '''
         Trains the network using the list `examples` of training examples. This
         is a list of 2-tuples (training input, training label), where "training
@@ -133,7 +135,7 @@ class NeuralNetwork(object):
         # Train over all examples
         for xv, y in examples:
             # Feedforward xv
-            av = feedforward(xv)
+            av = self.feedforward(xv)
 
             # Backpropagate and adjust weights and biases for next iteration
             yv = np.zeros(shape(layers[self.L-1].n,))
@@ -149,7 +151,7 @@ class NeuralNetwork(object):
                 l.bv += self.eta * delta_bv
 
 
-    def test(examples):
+    def test(self, examples):
         '''
         Tests the network on the list `examples`, which has the same format as
         the list provided to train(). Returns the accuracy rate.
@@ -162,18 +164,18 @@ class NeuralNetwork(object):
         # Test over all examples
         num_correct = 0
         for xv, y in examples:
-            y_test = evaluate(xv)
+            y_test = self.evaluate(xv)
             if y_test == y:
                 num_correct += 1
         return float(num_correct) / float(len(examples))
 
 
-    def evaluate(xv):
+    def evaluate(self, xv):
         '''
         Returns the classification chosen by the network for input xv (the index
         of the output with highest probability).
         '''
-        yv = feedforward(xv)
+        yv = self.feedforward(xv)
         max_index = 0
         max_value = yv[0]
         for i in range(0, yv.size):

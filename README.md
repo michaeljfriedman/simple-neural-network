@@ -1,4 +1,4 @@
-# Neural network
+# Simple neural network
 This is an implementation of the neural network algorithm described in [Michael Nielson's book](http://neuralnetworksanddeeplearning.com/index.html). After reading the first two chapters (through the backpropagation algorithm) and working out the theory, I decided to write out an implementation of the algorithm myself.
 
 ## Setup and dependencies
