@@ -138,7 +138,7 @@ class NeuralNetwork(object):
             av = self.feedforward(xv)
 
             # Backpropagate and adjust weights and biases for next iteration
-            yv = np.zeros(shape(layers[self.L-1].n,))
+            yv = np.zeros(shape=(layers[self.L-1].n,))
             yv[y] = 1
             for l in layers[-1:1:-1]:
                 # Compute delta_W and delta_bv
