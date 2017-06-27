@@ -353,7 +353,7 @@ class TestTrain(unittest.TestCase):
         Tests that the [2, 3, 2] network yields the correct activation and
         output after 1 training example.
         '''
-        nn, W, bv = make_2_3_2()
+        nn, weights, biases = make_2_3_2()
         xv = np.array([0.1, 0.2])
         y = 0
         examples = [(xv, y)]
@@ -371,7 +371,7 @@ class TestTrain(unittest.TestCase):
         Tests that the [2, 3, 2] network yields the correct activation and
         output after 1 training example.
         '''
-        nn, W, bv = make_2_3_4()
+        nn, weights, biases = make_2_3_4()
         xv = np.array([0.1, 0.2])
         y = 0
         examples = [(xv, y)]
@@ -389,7 +389,44 @@ class TestTrain(unittest.TestCase):
     # 1 hidden layer, 2 training examples
     #--------------------------------------
 
-    # TODO: Write tests for 1 hidden layer, 2 training examples
+    def test_2_3_2_train_2(self):
+        '''
+        Tests that the [2, 3, 2] network yields the correct activation and
+        output after 2 training examples.
+        '''
+        nn, weights, biases = make_2_3_2()
+        xv1 = np.array([0.1, 0.2])
+        y1 = 0
+        xv2 = np.array([0.01, 0.02])
+        y2 = 1
+        examples = [(xv1, y1), (xv2, y2)]
+
+        av_new = np.array([0.52467080, 0.50930864])  # result of xv1 after training
+        y_new = 0
+
+        nn.train(examples)
+        self.assertTrue(np.array_equal(nn.feedforward(xv1)), av_new, 'feedforward() incorrect')
+        self.assertEqual(nn.evaluate(xv1), y_new, 'evaluate() incorrect')
+
+
+    def test_2_3_4_train_2(self):
+        '''
+        Tests that the [2, 3, 4] network yields the correct activation and
+        output after 2 training examples.
+        '''
+        nn, weights, biases = make_2_3_2()
+        xv1 = np.array([0.1, 0.2])
+        y1 = 0
+        xv2 = np.array([0.01, 0.02])
+        y2 = 1
+        examples = [(xv1, y1), (xv2, y2)]
+
+        av_new = np.array([0.52299694, 0.52276690, 0.48873272, 0.49528621])  # result of xv1 after training
+        y_new = 0
+
+        nn.train(examples)
+        self.assertTrue(np.array_equal(nn.feedforward(xv1)), av_new, 'feedforward() incorrect')
+        self.assertEqual(nn.evaluate(xv1), y_new, 'evaluate() incorrect')
 
 
 
