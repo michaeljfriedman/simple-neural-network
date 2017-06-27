@@ -18,7 +18,7 @@ def make_1_1():
     '''
     W = np.array([0.3]).reshape(1, 1)
     bv = np.array([0.5])
-    nn = NeuralNetwork(layers=[1, 1], weights=[W], biases=[bv])
+    nn = NeuralNetwork(layers=[1, 1], eta=0.25, weights=[W], biases=[bv])
     return [nn, W, bv]
 
 def make_3_1():
@@ -28,7 +28,7 @@ def make_3_1():
     '''
     W = np.array([0.7, 0.11, 0.13]).reshape(1, 3)
     bv = np.array([0.17])
-    nn = NeuralNetwork(layers=[3, 1], weights=[W], biases=[bv])
+    nn = NeuralNetwork(layers=[3, 1], eta=0.25, weights=[W], biases=[bv])
     return [nn, W, bv]
 
 def make_1_3():
@@ -38,7 +38,7 @@ def make_1_3():
     '''
     W = np.array([0.3, 0.5, 0.7]).reshape(3, 1)
     bv = np.array([0.11, 0.13, 0.17])
-    nn = NeuralNetwork(layers=[1, 3], weights=[W], biases=[bv])
+    nn = NeuralNetwork(layers=[1, 3], eta=0.25, weights=[W], biases=[bv])
     return [nn, W, bv]
 
 def make_3_4():
@@ -48,7 +48,7 @@ def make_3_4():
     '''
     W = np.array([0.7, 0.11, 0.13, 0.17, 0.19, 0.23, 0.29, 0.31, 0.37, 0.41, 0.43, 0.47]).reshape(4, 3)
     bv = np.array([0.53, 0.59, 0.61, 0.67])
-    nn = NeuralNetwork(layers=[3, 4], weights=[W], biases=[bv])
+    nn = NeuralNetwork(layers=[3, 4], eta=0.25, weights=[W], biases=[bv])
     return [nn, W, bv]
 
 def make_1_1_1():
@@ -61,7 +61,7 @@ def make_1_1_1():
     bv1 = np.array([0.5])
     W2 = np.array([0.03]).reshape(1, 1)
     bv2 = np.array([0.05])
-    nn = NeuralNetwork(layers=[1, 1, 1], weights=[W1, W2], biases=[bv1, bv2])
+    nn = NeuralNetwork(layers=[1, 1, 1], eta=0.25, weights=[W1, W2], biases=[bv1, bv2])
     return [nn, [W1, W2], [bv1, bv2]]
 
 def make_1_3_1():
@@ -74,7 +74,7 @@ def make_1_3_1():
     bv1 = np.array([0.11, 0.13, 0.17])
     W2 = np.array([0.03, 0.05, 0.07]).reshape(1, 3)
     bv2 = np.array([0.011])
-    nn = NeuralNetwork(layers=[1, 3, 1], weights=[W1, W2], biases=[bv1, bv2])
+    nn = NeuralNetwork(layers=[1, 3, 1], eta=0.25, weights=[W1, W2], biases=[bv1, bv2])
     return [nn, [W1, W2], [bv1, bv2]]
 
 def make_2_3_2():
@@ -87,7 +87,7 @@ def make_2_3_2():
     bv1 = np.array([0.17, 0.19, 0.23])
     W2 = np.array([0.02, 0.03, 0.05, 0.07, 0.011, 0.013]).reshape(2, 3)
     bv2 = np.array([0.017, 0.019])
-    nn = NeuralNetwork(layers=[2, 3, 2], weights=[W1, W2], biases=[bv1, bv2])
+    nn = NeuralNetwork(layers=[2, 3, 2], eta=0.25, weights=[W1, W2], biases=[bv1, bv2])
     return [nn, [W1, W2], [bv1, bv2]]
 
 def make_2_3_4():
@@ -100,7 +100,7 @@ def make_2_3_4():
     bv1 = np.array([0.17, 0.19, 0.23])
     W2 = np.array([0.02, 0.03, 0.05, 0.07, 0.011, 0.013, 0.017, 0.019, 0.023, 0.029, 0.031, 0.037]).reshape(4, 3)
     bv2 = np.array([0.041, 0.043, 0.047, 0.053])
-    nn = NeuralNetwork(layers=[2, 3, 4], weights=[W1, W2], biases=[bv1, bv2])
+    nn = NeuralNetwork(layers=[2, 3, 4], eta=0.25, weights=[W1, W2], biases=[bv1, bv2])
     return [nn, [W1, W2], [bv1, bv2]]
 
 
