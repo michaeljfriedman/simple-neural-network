@@ -122,7 +122,7 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         av = NeuralNetwork.sigmoid(np.array([0.56]))  # W.dot(xv) + bv
         y = 0
 
-        self.assertTrue(np.array_equal(nn.feedforward(xv), av), 'feedforward() incorrect')
+        self.assertTrue(np.array_equal(nn.feedforward(xv)[-1], av), 'feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
 
 
@@ -135,7 +135,7 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         av = NeuralNetwork.sigmoid(np.array([0.408]))  # W.dot(xv) + bv
         y = 0
 
-        self.assertTrue(np.array_equal(nn.feedforward(xv), av), 'feedforward() incorrect')
+        self.assertTrue(np.array_equal(nn.feedforward(xv)[-1], av), 'feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
 
 
@@ -148,7 +148,7 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         av = NeuralNetwork.sigmoid(np.array([0.17, 0.23, 0.31]))  # W.dot(xv) + bv
         y = 2
 
-        self.assertTrue(np.array_equal(nn.feedforward(xv), av), 'feedforward() incorrect')
+        self.assertTrue(np.array_equal(nn.feedforward(xv)[-1], av), 'feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
 
 
@@ -161,7 +161,7 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         av = NeuralNetwork.sigmoid(np.array([0.768, 0.796, 0.946, 1.116]))  # W.dot(xv) + bv
         y = 3
 
-        self.assertTrue(np.array_equal(nn.feedforward(xv), av), 'feedforward() incorrect')
+        self.assertTrue(np.array_equal(nn.feedforward(xv)[-1], av), 'feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
 
     #---------------------------------
@@ -179,7 +179,7 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         av = NeuralNetwork.sigmoid(np.array([0.06909358]))
         y = 0
 
-        np.testing.assert_allclose(nn.feedforward(xv), av, rtol=1e-8, err_msg='feedforward() incorrect')
+        np.testing.assert_allclose(nn.feedforward(xv)[-1], av, rtol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
 
 
@@ -193,7 +193,7 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         av = NeuralNetwork.sigmoid(np.array([0.0955163]))
         y = 0
 
-        np.testing.assert_allclose(nn.feedforward(xv), av, rtol=1e-8, err_msg='feedforward() incorrect')
+        np.testing.assert_allclose(nn.feedforward(xv)[-1], av, rtol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
 
 
@@ -207,7 +207,7 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         av = NeuralNetwork.sigmoid(np.array([0.09837754, 0.09624759, 0.08086678, 0.10866837]))
         y = 3
 
-        np.testing.assert_allclose(nn.feedforward(xv), av, rtol=1e-8, err_msg='feedforward() incorrect')
+        np.testing.assert_allclose(nn.feedforward(xv)[-1], av, rtol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
 
 
@@ -225,19 +225,18 @@ class TestTrain(unittest.TestCase):
     def test_1_1_train_1(self):
         '''
         Tests that the [1, 1] network yields the correct activation and output
-        after 1 training example -- namely, no change, since the output will
-        always be correct.
+        after 1 training example
         '''
         nn, W, bv = make_1_1()
         xv = np.array([0.2])
         y = 0
         example = (xv, y)
 
-        av_new = NeuralNetwork.sigmoid(np.array([0.56]))  # result after training on xv
+        av_new = np.array([0.64149773])  # result after training on xv
         y_new = 0
 
         nn.train([example])
-        self.assertTrue(np.array_equal(nn.feedforward(xv)), av_new, 'feedforward() incorrect')
+        np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv), y_new, 'evaluate() incorrect')
 
 
@@ -252,11 +251,11 @@ class TestTrain(unittest.TestCase):
         y = 0
         example = (xv, y)
 
-        av_new = NeuralNetwork.sigmoid(np.array([0.408]))  # result after training on xv
+        av_new = np.array([0.60850987])  # result after training on xv
         y_new = 0
 
         nn.train([example])
-        self.assertTrue(np.array_equal(nn.feedforward(xv)), av_new, 'feedforward() incorrect')
+        np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv), y_new, 'evaluate() incorrect')
 
 
@@ -278,7 +277,7 @@ class TestTrain(unittest.TestCase):
         y_new = 2
 
         nn.train([example])
-        self.assertTrue(np.array_equal(nn.feedforward(xv)), av_new, 'feedforward() incorrect')
+        np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv), y_new, 'evaluate() incorrect')
 
 
@@ -296,7 +295,7 @@ class TestTrain(unittest.TestCase):
         y_new = 3
 
         nn.train([example])
-        self.assertTrue(np.array_equal(nn.feedforward(xv)), av_new, 'feedforward() incorrect')
+        np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv), y_new, 'evaluate() incorrect')
 
 
@@ -320,7 +319,7 @@ class TestTrain(unittest.TestCase):
         y_new = 2
 
         nn.train(examples)
-        self.assertTrue(np.array_equal(nn.feedforward(xv1)), av_new, 'feedforward() incorrect')
+        np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv1), y_new, 'evaluate() incorrect')
 
 
@@ -340,7 +339,7 @@ class TestTrain(unittest.TestCase):
         y_new = 3
 
         nn.train(examples)
-        self.assertTrue(np.array_equal(nn.feedforward(xv1)), av_new, 'feedforward() incorrect')
+        np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv1), y_new, 'evaluate() incorrect')
 
 
@@ -362,7 +361,7 @@ class TestTrain(unittest.TestCase):
         y_new = 0
 
         nn.train(examples)
-        self.assertTrue(np.array_equal(nn.feedforward(xv)), av_new, 'feedforward() incorrect')
+        np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv), y_new, 'evaluate() incorrect')
 
 
@@ -380,7 +379,7 @@ class TestTrain(unittest.TestCase):
         y_new = 0
 
         nn.train(examples)
-        self.assertTrue(np.array_equal(nn.feedforward(xv)), av_new, 'feedforward() incorrect')
+        np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv), y_new, 'evaluate() incorrect')
 
 
@@ -405,7 +404,7 @@ class TestTrain(unittest.TestCase):
         y_new = 0
 
         nn.train(examples)
-        self.assertTrue(np.array_equal(nn.feedforward(xv1)), av_new, 'feedforward() incorrect')
+        np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv1), y_new, 'evaluate() incorrect')
 
 
@@ -414,7 +413,7 @@ class TestTrain(unittest.TestCase):
         Tests that the [2, 3, 4] network yields the correct activation and
         output after 2 training examples.
         '''
-        nn, weights, biases = make_2_3_2()
+        nn, weights, biases = make_2_3_4()
         xv1 = np.array([0.1, 0.2])
         y1 = 0
         xv2 = np.array([0.01, 0.02])
@@ -425,7 +424,7 @@ class TestTrain(unittest.TestCase):
         y_new = 0
 
         nn.train(examples)
-        self.assertTrue(np.array_equal(nn.feedforward(xv1)), av_new, 'feedforward() incorrect')
+        np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.evaluate(xv1), y_new, 'evaluate() incorrect')
 
 

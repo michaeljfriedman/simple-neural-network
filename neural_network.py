@@ -92,25 +92,61 @@ class NeuralNetwork(object):
         '''
         return 1 / (1 + np.exp(-x))
 
-    @staticmethod
-    def sigmoid_prime(x):
-        '''
-        Returns a np array that applies the derivative of sigmoid element-wise
-        to the np array x.
-        '''
-        return NeuralNetwork.sigmoid(x) * (1 - NeuralNetwork.sigmoid(x))
-
     def feedforward(self, xv):
         '''
-        Returns the output vector after feeding forward the input xv through
-        the network.
+        Returns the list of activation vectors from each layer after feeding
+        forward the input xv through the network. (Special notes: the first
+        item in this list is the input xv, and the last item is the output
+        vector.)
         '''
         av = xv
+        avs = [av]
         for l in self.layers[1:]:
             # Compute activation vector at this layer
             zv = l.W.dot(av) + l.bv
             av = NeuralNetwork.sigmoid(zv)
-        return av
+            avs.append(av)
+        return avs
+
+    def backpropagate(self, y, avs):
+        '''
+        Compute error in the last layer from the correct label y, and
+        backpropagate that error using the list avs of activations from each
+        layer in the network (the result of feedforward(xv)).
+
+        Refer to docs for the explanation of this algorithm, and for its
+        derivation.
+        '''
+        # Convert y to vector form
+        yv = np.zeros(self.layers[-1].n)
+        yv[y] = 1
+
+        # Definition of sigmoid_prime
+        # NOTE: Since sigmoid_prime can be evaluated in terms of sigmoid, I
+        # define it in terms of sigmoid, rather than the original input.
+        # This saves us from having to store the original inputs zv to sigmoid.
+        sigmoid_prime = lambda sigmoid: sigmoid * (1 - sigmoid)
+
+        # Backpropagation algorithm
+        av = avs[-1]
+        dav_C = av - yv
+        dzv_C = dav_C * sigmoid_prime(av)
+        for i in reversed(range(1, self.L)):
+            l = self.layers[i]
+            av = avs[i]
+            av_prev = avs[i-1]
+
+            # Compute deltas in biases and weights
+            delta_bv = -self.eta * dzv_C
+            delta_W = -self.eta * np.outer(dzv_C, av_prev)
+
+            # Compute new intermediary derivatives
+            dav_C = np.transpose(l.W).dot(dav_C)
+            dzv_C = dav_C * sigmoid_prime(av_prev)
+
+            # Adjust biases and weights by their deltas
+            l.bv += delta_bv
+            l.W += delta_W
 
     #---------------------------------------------------------------------------
 
@@ -135,20 +171,10 @@ class NeuralNetwork(object):
         # Train over all examples
         for xv, y in examples:
             # Feedforward xv
-            av = self.feedforward(xv)
+            avs = self.feedforward(xv)
 
-            # Backpropagate and adjust weights and biases for next iteration
-            yv = np.zeros(shape=(layers[self.L-1].n,))
-            yv[y] = 1
-            for l in layers[-1:1:-1]:
-                # Compute delta_W and delta_bv
-                # TODO: Implement backpropagation
-                delta_W = 0
-                delta_bv = 0
-
-                # Adjust W and bv by their deltas
-                l.W += self.eta * delta_W
-                l.bv += self.eta * delta_bv
+            # Backpropagate error
+            self.backpropagate(y, avs)
 
 
     def test(self, examples):
@@ -175,7 +201,7 @@ class NeuralNetwork(object):
         Returns the classification chosen by the network for input xv (the index
         of the output with highest probability).
         '''
-        yv = self.feedforward(xv)
+        yv = self.feedforward(xv)[-1]
         max_index = 0
         max_value = yv[0]
         for i in range(0, yv.size):
