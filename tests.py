@@ -400,7 +400,7 @@ class TestTrain(unittest.TestCase):
         y2 = 1
         examples = [(xv1, y1), (xv2, y2)]
 
-        av_new = np.array([0.52467080, 0.50930864])  # result of xv1 after training
+        av_new = np.array([0.51736309, 0.51714300])  # result of xv1 after training
         y_new = 0
 
         nn.train(examples)
