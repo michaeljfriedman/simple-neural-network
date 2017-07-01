@@ -11,13 +11,16 @@ and then running the provided `configure` script. (However, note that to use thi
 ```
 ./configure --help
 ```
-on a Bash shell (i.e. Linux/Mac) or:
+in a Bash shell (Linux/Mac) or:
 ```
-configure.cmd --help
+.\configure --help
 ```
-on Windows for instructions on its usage. Read on for details on the project's dependencies.
+in PowerShell (Windows) for instructions on its usage. Read on for details on the project's dependencies.
 
 ### Dependencies
 This project is written in Python 2.7, and uses the following dependencies, frameworks, packages, etc.:
 
 - Numpy: Python vector/matrix algebra package, used for vector/matrix computation
+
+## Documentation
+See the docs/ directory for the project documentation.

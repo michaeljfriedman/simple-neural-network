@@ -6,7 +6,6 @@
 # your environment for this project.
 
 # Check for help command
-# TODO: Modify these as necessary
 usage="usage:
 ./configure
 ./configure --help"
