@@ -357,7 +357,7 @@ class TestTrain(unittest.TestCase):
         y = 0
         examples = [(xv, y)]
 
-        av_new = np.array([0.53349089, 0.50197267])  # result of xv after training
+        av_new = np.array([0.53348918, 0.50197726])  # result of xv after training
         y_new = 0
 
         nn.train(examples)
@@ -375,7 +375,7 @@ class TestTrain(unittest.TestCase):
         y = 0
         examples = [(xv, y)]
 
-        av_new = np.array([0.53924222, 0.50779901, 0.50407205, 0.51082315])  # result of xv after training
+        av_new = np.array([0.53925307, 0.50780625, 0.50407204, 0.51082614])  # result of xv after training
         y_new = 0
 
         nn.train(examples)
@@ -400,7 +400,7 @@ class TestTrain(unittest.TestCase):
         y2 = 1
         examples = [(xv1, y1), (xv2, y2)]
 
-        av_new = np.array([0.51736309, 0.51714300])  # result of xv1 after training
+        av_new = np.array([0.51736881, 0.51714835])  # result of xv1 after training
         y_new = 0
 
         nn.train(examples)
@@ -420,7 +420,7 @@ class TestTrain(unittest.TestCase):
         y2 = 1
         examples = [(xv1, y1), (xv2, y2)]
 
-        av_new = np.array([0.52299694, 0.52276690, 0.48873272, 0.49528621])  # result of xv1 after training
+        av_new = np.array([0.52300829, 0.52278460, 0.48872059, 0.49527995])  # result of xv1 after training
         y_new = 0
 
         nn.train(examples)

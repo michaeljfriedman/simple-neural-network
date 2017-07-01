@@ -141,7 +141,7 @@ class NeuralNetwork(object):
             delta_W = -self.eta * np.outer(dzv_C, av_prev)
 
             # Compute new intermediary derivatives
-            dav_C = np.transpose(l.W).dot(dav_C)
+            dav_C = np.transpose(l.W).dot(dzv_C)
             dzv_C = dav_C * sigmoid_prime(av_prev)
 
             # Adjust biases and weights by their deltas
