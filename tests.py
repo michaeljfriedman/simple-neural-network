@@ -106,7 +106,7 @@ def make_2_3_4():
 
 class TestFeedforwardAndEvaluate(unittest.TestCase):
     '''
-    Tests for the functions feedforward() and evaluate().
+    Tests for the functions feedforward() and classify().
     '''
 
     #---------------------------------
@@ -115,7 +115,7 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
 
     def test_1_1(self):
         '''
-        Test results of feedfoward() and evaluate() on 1 input and 1 output.
+        Test results of feedfoward() and classify() on 1 input and 1 output.
         '''
         nn, W, bv = make_1_1()
         xv = np.array([0.2])
@@ -123,12 +123,12 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         y = 0
 
         self.assertTrue(np.array_equal(nn.feedforward(xv)[-1], av), 'feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv), y, 'classify() incorrect')
 
 
     def test_3_1(self):
         '''
-        Test results of feedfoward() and evaluate() on 3 inputs and 1 output.
+        Test results of feedfoward() and classify() on 3 inputs and 1 output.
         '''
         nn, W, bv = make_3_1()
         xv = np.array([0.2, 0.3, 0.5])
@@ -136,12 +136,12 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         y = 0
 
         self.assertTrue(np.array_equal(nn.feedforward(xv)[-1], av), 'feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv), y, 'classify() incorrect')
 
 
     def test_1_3(self):
         '''
-        Test results of feedfoward() and evaluate() on 1 input and 3 outputs.
+        Test results of feedfoward() and classify() on 1 input and 3 outputs.
         '''
         nn, W, bv = make_1_3()
         xv = np.array([0.2])
@@ -149,12 +149,12 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         y = 2
 
         self.assertTrue(np.array_equal(nn.feedforward(xv)[-1], av), 'feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv), y, 'classify() incorrect')
 
 
     def test_3_4(self):
         '''
-        Test results of feedfoward() and evaluate() on 3 inputs and 4 outputs.
+        Test results of feedfoward() and classify() on 3 inputs and 4 outputs.
         '''
         nn, W, bv = make_3_4()
         xv = np.array([0.2, 0.3, 0.5])
@@ -162,7 +162,7 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         y = 3
 
         self.assertTrue(np.array_equal(nn.feedforward(xv)[-1], av), 'feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv), y, 'classify() incorrect')
 
     #---------------------------------
     # 1 hidden layer
@@ -171,7 +171,7 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
 
     def test_1_1_1(self):
         '''
-        Test results of feedforward() and evaluate() on 1 input, layer of 1,
+        Test results of feedforward() and classify() on 1 input, layer of 1,
         and 1 output.
         '''
         nn, weights, biases = make_1_1_1()
@@ -180,12 +180,12 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         y = 0
 
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av, rtol=1e-8, err_msg='feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv), y, 'classify() incorrect')
 
 
     def test_1_3_1(self):
         '''
-        Test results of feedforward() and evaluate() on 1 input, layer of 3,
+        Test results of feedforward() and classify() on 1 input, layer of 3,
         and 1 output.
         '''
         nn, weights, biases = make_1_3_1()
@@ -194,12 +194,12 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         y = 0
 
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av, rtol=1e-8, err_msg='feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv), y, 'classify() incorrect')
 
 
     def test_2_3_4(self):
         '''
-        Test results of feedforward() and evaluate() on 2 inputs, layer of 3,
+        Test results of feedforward() and classify() on 2 inputs, layer of 3,
         and 4 outputs.
         '''
         nn, weights, biases = make_2_3_4()
@@ -208,7 +208,7 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         y = 3
 
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av, rtol=1e-8, err_msg='feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv), y, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv), y, 'classify() incorrect')
 
 
 
@@ -237,7 +237,7 @@ class TestTrain(unittest.TestCase):
 
         nn.train([example])
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv), y_new, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
 
     def test_3_1_train_1(self):
@@ -256,7 +256,7 @@ class TestTrain(unittest.TestCase):
 
         nn.train([example])
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv), y_new, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
 
     #--------------------------------------
@@ -278,7 +278,7 @@ class TestTrain(unittest.TestCase):
 
         nn.train([example])
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv), y_new, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
 
     def test_3_4_train_1(self):
@@ -296,7 +296,7 @@ class TestTrain(unittest.TestCase):
 
         nn.train([example])
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv), y_new, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
 
     #----------------------------------------
@@ -320,7 +320,7 @@ class TestTrain(unittest.TestCase):
 
         nn.train(examples)
         np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv1), y_new, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv1), y_new, 'classify() incorrect')
 
 
     def test_3_4_train_2(self):
@@ -340,7 +340,7 @@ class TestTrain(unittest.TestCase):
 
         nn.train(examples)
         np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv1), y_new, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv1), y_new, 'classify() incorrect')
 
 
     #-------------------------------------
@@ -362,7 +362,7 @@ class TestTrain(unittest.TestCase):
 
         nn.train(examples)
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv), y_new, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
 
     def test_2_3_4_train_1(self):
@@ -380,7 +380,7 @@ class TestTrain(unittest.TestCase):
 
         nn.train(examples)
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv), y_new, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
 
 
@@ -405,7 +405,7 @@ class TestTrain(unittest.TestCase):
 
         nn.train(examples)
         np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv1), y_new, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv1), y_new, 'classify() incorrect')
 
 
     def test_2_3_4_train_2(self):
@@ -425,7 +425,7 @@ class TestTrain(unittest.TestCase):
 
         nn.train(examples)
         np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, rtol=1e-8, err_msg='feedforward() incorrect')
-        self.assertEqual(nn.evaluate(xv1), y_new, 'evaluate() incorrect')
+        self.assertEqual(nn.classify(xv1), y_new, 'classify() incorrect')
 
 
 

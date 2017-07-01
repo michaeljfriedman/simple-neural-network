@@ -190,13 +190,13 @@ class NeuralNetwork(object):
         # Test over all examples
         num_correct = 0
         for xv, y in examples:
-            y_test = self.evaluate(xv)
+            y_test = self.classify(xv)
             if y_test == y:
                 num_correct += 1
         return float(num_correct) / float(len(examples))
 
 
-    def evaluate(self, xv):
+    def classify(self, xv):
         '''
         Returns the classification chosen by the network for input xv (the index
         of the output with highest probability).
