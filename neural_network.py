@@ -156,7 +156,7 @@ class NeuralNetwork(object):
         '''
         Trains the network using the list `examples` of training examples. This
         is a list of 2-tuples (training input, training label), where "training
-        input" is a vector (np array) with the same length as the number of
+        input" is a vector (np.array) with the same length as the number of
         inputs in the network, and "training label" is the correct
         classification for that input, indexed from 0.
 
@@ -180,7 +180,8 @@ class NeuralNetwork(object):
     def test(self, examples):
         '''
         Tests the network on the list `examples`, which has the same format as
-        the list provided to train(). Returns the accuracy rate.
+        the list provided to train(). Returns the accuracy rate, a floating
+        point number out of 1.
         '''
         # Validate length of inputs/outputs in examples
         for xv, _ in examples:
@@ -199,7 +200,7 @@ class NeuralNetwork(object):
     def classify(self, xv):
         '''
         Returns the classification chosen by the network for input xv (the index
-        of the output with highest probability).
+        of the output with highest probability, indexed from 0).
         '''
         yv = self.feedforward(xv)[-1]
         max_index = 0

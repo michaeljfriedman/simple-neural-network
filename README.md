@@ -23,4 +23,4 @@ This project is written in Python 2.7, and uses the following dependencies, fram
 - Numpy: Python vector/matrix algebra package, used for vector/matrix computation
 
 ## Documentation
-See the docs/ directory for the project documentation.
+See the docs/ directory for the full project documentation.
