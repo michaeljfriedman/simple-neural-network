@@ -6,14 +6,19 @@
 # your environment for this project.
 
 # Check for help command
-usage="usage:
-./configure
-./configure --help"
-help_message="This script automates installation of dependencies and other configuration
+read -d '' usage << EOF
+Usage: ./configure
+       ./configure --help
+EOF
+
+read -d '' help_message << EOF
+This script automates installation of dependencies and other configuration
 of your environment for the project.
 
 Arguments
---help          display this message"
+--help          display this message
+EOF
+
 if [ $# -eq 1 ] && [ "$1" == "--help" ]; then
   echo "$usage"
   echo
