@@ -69,7 +69,7 @@ class NeuralNetwork(object):
         # Initialize weights arbitrarily. Each consecutive pair of layers
         # (prev/next layers) has a matrix of weights.
         if not weights:
-            weights = [np.empty(shape=(layers[i], layers[i+1])) for i in range(0, len(layers)-1)]
+            weights = [np.empty(shape=(layers[i+1], layers[i])) for i in range(0, len(layers)-1)]
 
         # Initialize biases arbitrarily. Same principle as with weights, except
         # each pair of layers has a vector of biases.

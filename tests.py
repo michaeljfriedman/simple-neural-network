@@ -211,6 +211,24 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
         self.assertEqual(nn.classify(xv), y, 'classify() incorrect')
 
 
+    #---------------------------------
+    # Test without predefined weights
+    # and biases
+    #---------------------------------
+
+    def test_network_defined_weights_and_biases(self):
+        '''
+        Tests that when the network creates the weight matrices and bias
+        vectors that feedforward() still works (i.e. no crashes) due to wrong
+        dimensions.
+        '''
+        nn = NeuralNetwork(layers=[2, 3, 4], eta=0.25)
+        xv = np.array([0.1, 0.2])
+        try:
+            nn.feedforward(xv)
+        except Exception as e:
+            raise Exception('feedforward() failed when the network created weight matrices and bias vectors: ' + str(e))
+
 
 class TestTrain(unittest.TestCase):
     '''
