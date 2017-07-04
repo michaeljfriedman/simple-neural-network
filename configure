@@ -51,4 +51,4 @@ echo "----- Done installing Python packages -----"
 
 deactivate
 
-echo "Remember to activate the virtual environment with 'venv\Scripts\activate' to use the Python packages."
+echo "Remember to activate the virtual environment with 'source venv/bin/activate' to use the Python packages."

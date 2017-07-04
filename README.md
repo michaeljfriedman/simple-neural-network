@@ -20,7 +20,7 @@ in PowerShell (Windows) for instructions on its usage. Read on for details on th
 ### Dependencies
 This project is written in Python 2.7, and uses the following dependencies, frameworks, packages, etc.:
 
-- Numpy: Python vector/matrix algebra package, used for vector/matrix computation
+- Numpy: Python vector/matrix algebra package. Used for vector/matrix computation in neural_network.py
 
 ## Documentation
-See the docs/ directory for the full project documentation.
+For more details, see the [project documentation](docs/README.md).

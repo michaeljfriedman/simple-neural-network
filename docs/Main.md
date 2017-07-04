@@ -13,5 +13,6 @@ Currently, neural_network.py implements a network with:
 - Neuron activation function: sigmoid
 - Learning algorithm's error ("loss") function: Euclidean distance
 - User-defined learning rate
+- Training until the network settles at an optimum
 
 You can train the network with training data, test it with testing data to get an accuracy rate, and then use it to classify new data.

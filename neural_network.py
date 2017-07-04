@@ -20,6 +20,7 @@
 #     - Delta values are preceded by 'delta_'. Ex: delta_W, delta_bv.
 #-------------------------------------------------------------------------------
 
+from copy import deepcopy
 import numpy as np
 
 class NeuralNetwork(object):
@@ -41,7 +42,7 @@ class NeuralNetwork(object):
 
     #---------------------------------------------------------------------------
 
-    def __init__(self, layers, eta=0.25, weights=None, biases=None):
+    def __init__(self, layers, weights=None, biases=None):
         '''
         Initializes the NeuralNetwork given `layers`, a list of integers
         indicating the number of neurons in each layer of the network. (The
@@ -62,19 +63,18 @@ class NeuralNetwork(object):
             if n <= 0:
                 raise ValueError('Number of neurons in each layer must be positive')
 
-        # Initialize basic parameters
+        # Initialize number of layers
         self.L = len(layers)
-        self.eta = eta
 
         # Initialize weights arbitrarily. Each consecutive pair of layers
         # (prev/next layers) has a matrix of weights.
         if not weights:
-            weights = [np.empty(shape=(layers[i+1], layers[i])) for i in range(0, len(layers)-1)]
+            weights = [np.random.rand(layers[i+1], layers[i]) for i in range(0, len(layers)-1)]
 
         # Initialize biases arbitrarily. Same principle as with weights, except
         # each pair of layers has a vector of biases.
         if not biases:
-            biases = [np.empty(shape=(layers[i+1],)) for i in range(0, len(layers)-1)]
+            biases = [np.random.rand(layers[i+1],) for i in range(0, len(layers)-1)]
 
         # Place info into list of Layer containers
         self.layers = [NeuralNetwork.Layer(layers[0], None, None)] + [NeuralNetwork.Layer(layers[i], weights[i-1], biases[i-1]) for i in range(1, len(layers))]
@@ -108,7 +108,7 @@ class NeuralNetwork(object):
             avs.append(av)
         return avs
 
-    def backpropagate(self, y, avs):
+    def backpropagate(self, y, avs, eta):
         '''
         Compute error in the last layer from the correct label y, and
         backpropagate that error using the list avs of activations from each
@@ -137,8 +137,8 @@ class NeuralNetwork(object):
             av_prev = avs[i-1]
 
             # Compute deltas in biases and weights
-            delta_bv = -self.eta * dzv_C
-            delta_W = -self.eta * np.outer(dzv_C, av_prev)
+            delta_bv = -eta * dzv_C
+            delta_W = -eta * np.outer(dzv_C, av_prev)
 
             # Compute new intermediary derivatives
             dav_C = np.transpose(l.W).dot(dzv_C)
@@ -152,29 +152,77 @@ class NeuralNetwork(object):
 
     # Public methods
 
-    def train(self, examples):
+    def train(self, examples, eta=0.25, nd=1e-5, max_rounds=None):
         '''
         Trains the network using the list `examples` of training examples. This
         is a list of 2-tuples (training input, training label), where "training
-        input" is a vector (np.array) with the same length as the number of
+        input" is a vector (`np.array`) with the same length as the number of
         inputs in the network, and "training label" is the correct
         classification for that input, indexed from 0.
 
-        Note that the inputs are *not* validated as numbers, so it's up to the
-        caller to make sure they are numbers, or risk unpredictable errors.
+        Optionally provide `eta`, the learning rate.
+
+        Also optionally provide `nd` and/or `max_rounds`, the "negligible delta"
+        value and maximum number of rounds, respectively. If only `nd` is
+        specified, then the network trains until it "settles" within this
+        negligible delta: that is, it trains for as many rounds as necessary
+        until the weights and biases change by no more than `nd` in a round. If
+        `max_rounds` is also specified, then the network will train either until
+        it settles or until it passes `max_rounds` rounds. If only `max_rounds`
+        is specified, then the network will just train for that fixed number of
+        rounds.
         '''
-        # Validate length of inputs/outputs in examples
+        # Validate parameters
         for xv, _ in examples:
             if xv.shape != (self.layers[0].n,):
                 raise ValueError('Training inputs must be the same length as the number of inputs in the network')
+        if (nd != None) and (nd <= 0):
+            raise ValueError('nd must be positive')
+        if (max_rounds != None) and (max_rounds <= 0):
+            raise ValueError('max_rounds must be positive')
+        if (nd == None) and (max_rounds == None):
+            raise ValueError('One of nd or max_rounds must be set')
 
-        # Train over all examples
-        for xv, y in examples:
-            # Feedforward xv
-            avs = self.feedforward(xv)
 
-            # Backpropagate error
-            self.backpropagate(y, avs)
+        # Helper functions
+        def train_one_round(examples):
+            for xv, y in examples:
+                avs = self.feedforward(xv)       # feedforward xv
+                self.backpropagate(y, avs, eta)  # backpropagate error
+
+        def train_one_round_toward_settling(examples, nd):
+            # Compare new weights/biases to old weights/biases. Return True
+            # if we reached the settling point, False if not
+            old_layers = deepcopy(self.layers)
+            train_one_round(examples)
+            settled = True
+            for i in range(1, self.L):
+                W_old, bv_old = old_layers[i].W, old_layers[i].bv
+                W, bv = self.layers[i].W, self.layers[i].bv
+                if np.any(np.abs(W - W_old) > nd) or np.any(np.abs(bv - bv_old) > nd):
+                    settled = False
+                    break
+            return settled
+
+
+        # Train over all rounds
+        if (nd != None) and (max_rounds != None):
+            # Train until network settles at nd, or until we pass max_rounds
+            for r in range(0, max_rounds):
+                settled = train_one_round_toward_settling(examples, nd)
+                if settled:
+                    return
+        elif nd != None:
+            # Train until network settles at nd
+            while True:
+                settled = train_one_round_toward_settling(examples, nd)
+                if settled:
+                    return
+        else:
+            # Train for max_rounds rounds
+            for r in range(0, max_rounds):
+                train_one_round(examples)
+
 
 
     def test(self, examples):
