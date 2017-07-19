@@ -5,8 +5,6 @@
 ### `__init__(layers, weights=None, biases=None)`
 Initializes the NeuralNetwork given `layers`, a list of integers indicating the number of neurons in each layer of the network. (The first and last value in this list are thus the number of inputs and outputs of the network, respectively.) Values in this list must all be positive numbers, or an exception will be raised.
 
-Also optionally provide `eta`, the learning rate.
-
 For testing purposes, also optionally provide `weights`, a list of initial weight matrices between each pair of layers. Each matrix corresponds to the weights applied to the *second* layer in the pair. Similarly, provide `biases`, the corresponding list of initial bias vectors.
 
 ### `train(examples, eta=0.25, nd=1e-5, max_rounds=None)`
