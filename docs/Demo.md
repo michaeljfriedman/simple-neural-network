@@ -35,6 +35,15 @@ training_data = [(training_xs[i], training_ys[i]) for i in range(0, len(training
 nn.train(training_data)
 ```
 
+### Customizing the error function
+By default, `train()` uses cross entropy as its heuristic for measuring error between the network's output and the correct classifications. In most cases, this is a good heuristic that makes the network learn quickly. However, you can also set it to a different heuristic by setting the `error_function` parameter:
+
+```python
+nn.train(training_data, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE)
+```
+
+See the API reference page for a list of all the error functions you can choose from.
+
 ### Customizing the learning rate
 By default, `train()` uses a learning rate `eta` of 0.25. You can set this value higher to make the network learn "faster", or lower to make it learn "slower". Experiment with this value to see what works best for your network. In this example, we set a custom value of 0.05:
 
@@ -85,7 +94,7 @@ This prints the classification `y` determined by the network, an integer from 0 
 For completeness, here we put everything together from the previous sections, so you can see the full flow. The following snippet:
 
 - Creates the network from the second example under **Creating a network**
-- Trains it on the data `training_xs` and `training_ys` from the fourth example of **Training a network**
+- Trains it on the data `training_xs` and `training_ys` from **Training a network**, customizing all of the `train()` parameters.
 - Tests it on `testing_data` from **Testing a network**
 - Classifies the input `x` from **Classifying data**
 
@@ -96,7 +105,7 @@ nn = NeuralNetwork(layers=[240, 10, 10, 2])
 
 # Train the network
 training_data = [(training_xs[i], training_ys[i]) for i in range(0, len(training_xs))]
-nn.train(training_data, nd=1e-8, max_rounds=100000)
+nn.train(training_data, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.05, nd=1e-8, max_rounds=100000)
 
 # Test the network
 # Note: testing_data would be constructed in a similar manner to training_data

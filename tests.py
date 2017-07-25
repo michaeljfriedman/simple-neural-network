@@ -230,9 +230,10 @@ class TestFeedforwardAndEvaluate(unittest.TestCase):
             raise Exception('feedforward() failed when the network created weight matrices and bias vectors: ' + str(e))
 
 
-class TestTrain(unittest.TestCase):
+class TestTrainEuclideanDistance(unittest.TestCase):
     '''
-    Tests for train() (i.e. the backpropagation algorithm)
+    Tests for train() (i.e. the backpropagation algorithm) using the Euclidean
+    distance error function
     '''
 
     #-------------------------------------
@@ -248,12 +249,12 @@ class TestTrain(unittest.TestCase):
         nn, W, bv = make_1_1()
         xv = np.array([0.2])
         y = 0
-        example = (xv, y)
+        examples = [(xv, y)]
 
         av_new = np.array([0.64149773])  # result after training on xv
         y_new = 0
 
-        nn.train([example], eta=0.25, nd=None, max_rounds=1)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=None, max_rounds=1)
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
@@ -267,12 +268,12 @@ class TestTrain(unittest.TestCase):
         nn, W, bv = make_3_1()
         xv = np.array([0.2, 0.3, 0.5])
         y = 0
-        example = (xv, y)
+        examples = [(xv, y)]
 
         av_new = np.array([0.60850987])  # result after training on xv
         y_new = 0
 
-        nn.train([example], eta=0.25, nd=None, max_rounds=1)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=None, max_rounds=1)
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
@@ -289,12 +290,12 @@ class TestTrain(unittest.TestCase):
         nn, W, bv = make_1_3()
         xv = np.array([0.2])
         y = 0
-        example = (xv, y)
+        examples = [(xv, y)]
 
         av_new = np.array([0.54971773, 0.54841129, 0.56792473])  # result after training on xv
         y_new = 2
 
-        nn.train([example], eta=0.25, nd=None, max_rounds=1)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=None, max_rounds=1)
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
@@ -307,12 +308,12 @@ class TestTrain(unittest.TestCase):
         nn, W, bv = make_3_4()
         xv = np.array([0.2, 0.3, 0.5])
         y = 0
-        example = (xv, y)
+        examples = [(xv, y)]
 
         av_new = np.array([0.68818950, 0.67810281, 0.71011341, 0.74415907])  # result after training on xv
         y_new = 3
 
-        nn.train([example], eta=0.25, nd=None, max_rounds=1)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=None, max_rounds=1)
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
@@ -336,7 +337,7 @@ class TestTrain(unittest.TestCase):
         av_new = np.array([0.54142166,  0.55574055,  0.55968207])  # result of xv1 after training
         y_new = 2
 
-        nn.train(examples, eta=0.25, nd=None, max_rounds=1)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=None, max_rounds=1)
         np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv1), y_new, 'classify() incorrect')
 
@@ -356,7 +357,7 @@ class TestTrain(unittest.TestCase):
         av_new = np.array([0.67992246,  0.68279612,  0.70215662,  0.73677188])  # result of xv1 after training
         y_new = 3
 
-        nn.train(examples, eta=0.25, nd=None, max_rounds=1)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=None, max_rounds=1)
         np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv1), y_new, 'classify() incorrect')
 
@@ -378,7 +379,7 @@ class TestTrain(unittest.TestCase):
         av_new = np.array([0.53348918, 0.50197726])  # result of xv after training
         y_new = 0
 
-        nn.train(examples, eta=0.25, nd=None, max_rounds=1)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=None, max_rounds=1)
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
@@ -396,7 +397,7 @@ class TestTrain(unittest.TestCase):
         av_new = np.array([0.53925307, 0.50780625, 0.50407204, 0.51082614])  # result of xv after training
         y_new = 0
 
-        nn.train(examples, eta=0.25, nd=None, max_rounds=1)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=None, max_rounds=1)
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
@@ -421,7 +422,7 @@ class TestTrain(unittest.TestCase):
         av_new = np.array([0.51736881, 0.51714835])  # result of xv1 after training
         y_new = 0
 
-        nn.train(examples, eta=0.25, nd=None, max_rounds=1)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=None, max_rounds=1)
         np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv1), y_new, 'classify() incorrect')
 
@@ -441,7 +442,7 @@ class TestTrain(unittest.TestCase):
         av_new = np.array([0.52300829, 0.52278460, 0.48872059, 0.49527995])  # result of xv1 after training
         y_new = 0
 
-        nn.train(examples, eta=0.25, nd=None, max_rounds=1)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=None, max_rounds=1)
         np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv1), y_new, 'classify() incorrect')
 
@@ -463,7 +464,7 @@ class TestTrain(unittest.TestCase):
         av_new = np.array([0.69312131, 0.66685643, 0.69962301, 0.73474270])
         y_new = 3
 
-        nn.train(examples, eta=0.25, nd=None, max_rounds=2)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=None, max_rounds=2)
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
@@ -483,7 +484,7 @@ class TestTrain(unittest.TestCase):
         av_new = np.array([0.67683375, 0.67646289, 0.68326675, 0.71942654])
         y_new = 3
 
-        nn.train(examples, eta=0.25, nd=None, max_rounds=2)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=None, max_rounds=2)
         np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv1), y_new, 'classify() incorrect')
 
@@ -502,7 +503,7 @@ class TestTrain(unittest.TestCase):
         av_new = np.array([0.93825760, 0.06477398, 0.06501966, 0.06530958])
         y_new = 0
 
-        nn.train(examples, eta=0.25, nd=1e-3)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=1e-3)
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
@@ -521,7 +522,7 @@ class TestTrain(unittest.TestCase):
         av_new = np.array([0.93545749, 0.06508182, 0.06500411, 0.06509811])
         y_new = 0
 
-        nn.train(examples, eta=0.25, nd=1e-3)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=1e-3)
         np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
@@ -542,9 +543,138 @@ class TestTrain(unittest.TestCase):
         av_new = np.array([0.91118657, 0.08873599, 0.00922352, 0.00923353])
         y_new = 0
 
-        nn.train(examples, eta=0.25, nd=1e-3)
+        nn.train(examples, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.25, nd=1e-3)
         np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
         self.assertEqual(nn.classify(xv1), y_new, 'classify() incorrect')
+
+
+class TestTrainCrossEntropy(unittest.TestCase):
+    '''
+    Tests for train() (i.e. the backpropagation algorithm) using the cross
+    entropy error function.
+
+    Since the algorithm for training is the same as with Euclidean distance,
+    just with different initialization, I assume that the tests from the
+    previous class sufficiently test the algorithm. So the purpose of this
+    class is simply to test a few cases to check that the cross-entropy-based
+    version of the algorithm computes the correct output.
+    '''
+
+    def test_3_4_train_1(self):
+        '''
+        Tests that the [3, 4] network yields the correct activation and output
+        after 1 training example.
+        '''
+        nn, W, bv = make_3_4()
+        xv = np.array([0.2, 0.3, 0.5])
+        y = 0
+        examples = [(xv, y)]
+
+        av_new = np.array([0.70626958, 0.63604851, 0.66763171, 0.70185149])  # result after training on xv
+        y_new = 0
+
+        nn.train(examples, error_function=NeuralNetwork.CROSS_ENTROPY, eta=0.25, nd=None, max_rounds=1)
+        np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
+        self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
+
+
+    def test_3_4_train_2(self):
+        '''
+        Tests that the [3, 4] network yields the correct activation and output
+        after 2 training examples.
+        '''
+        nn, W, bv = make_3_4()
+        xv1 = np.array([0.2, 0.3, 0.5])
+        y1 = 0
+        xv2 = np.array([0.02, 0.03, 0.05])
+        y2 = 1
+        examples = [(xv1, y1), (xv2, y2)]
+
+        av_new = np.array([0.66988359, 0.65935475, 0.63149142, 0.66673127])  # result of xv1 after training
+        y_new = 0
+
+        nn.train(examples, error_function=NeuralNetwork.CROSS_ENTROPY, eta=0.25, nd=None, max_rounds=1)
+        np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
+        self.assertEqual(nn.classify(xv1), y_new, 'classify() incorrect')
+
+
+    def test_2_3_4_train_1(self):
+        '''
+        Tests that the [2, 3, 2] network yields the correct activation and
+        output after 1 training example.
+        '''
+        nn, weights, biases = make_2_3_4()
+        xv = np.array([0.1, 0.2])
+        y = 0
+        examples = [(xv, y)]
+
+        av_new = np.array([0.58290633, 0.45900184, 0.45566781, 0.46171057])  # result of xv after training
+        y_new = 0
+
+        nn.train(examples, error_function=NeuralNetwork.CROSS_ENTROPY, eta=0.25, nd=None, max_rounds=1)
+        np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
+        self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
+
+
+    def test_2_3_4_train_2(self):
+        '''
+        Tests that the [2, 3, 4] network yields the correct activation and
+        output after 2 training examples.
+        '''
+        nn, weights, biases = make_2_3_4()
+        xv1 = np.array([0.1, 0.2])
+        y1 = 0
+        xv2 = np.array([0.01, 0.02])
+        y2 = 1
+        examples = [(xv1, y1), (xv2, y2)]
+
+        av_new = np.array([0.51287332, 0.52466737, 0.40130401, 0.40647212])  # result of xv1 after training
+        y_new = 1
+
+        nn.train(examples, error_function=NeuralNetwork.CROSS_ENTROPY, eta=0.25, nd=None, max_rounds=1)
+        np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
+        self.assertEqual(nn.classify(xv1), y_new, 'classify() incorrect')
+
+
+    def test_3_4_train_2_for_2_rounds(self):
+        '''
+        Tests that the [3, 4] network yields correct activation and output
+        after training 2 examples for 2 time steps.
+        '''
+        nn, W, bv = make_3_4()
+        xv1 = np.array([0.2, 0.3, 0.5])
+        y1 = 0
+        xv2 = np.array([0.02, 0.03, 0.05])
+        y2 = 1
+        examples = [(xv1, y1), (xv2, y2)]
+
+        av_new = np.array([0.65848101, 0.63172401, 0.54537277, 0.57967869])
+        y_new = 3
+
+        nn.train(examples, error_function=NeuralNetwork.CROSS_ENTROPY, eta=0.25, nd=None, max_rounds=2)
+        np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
+        self.assertEqual(nn.classify(xv1), y_new, 'classify() incorrect')
+
+
+    def test_3_4_train_1_until_network_settles(self):
+        '''
+        Tests that the [3, 4] network yields correct activation and output
+        after training 1 example until the network "settles" within a factor
+        of 1/1000.
+        '''
+        nn, W, bv = make_3_4()
+        xv = np.array([0.2, 0.3, 0.5])
+        y = 0
+        examples = [(xv, y)]
+
+        av_new = np.array([0.99606464, 0.00398431, 0.00398756, 0.0039911])
+        y_new = 0
+
+        nn.train(examples, error_function=NeuralNetwork.CROSS_ENTROPY, eta=0.25, nd=1e-3)
+        np.testing.assert_allclose(nn.feedforward(xv)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
+        self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
+
+
 
 
 if __name__ == '__main__':

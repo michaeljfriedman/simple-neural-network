@@ -10,3 +10,4 @@
   + [Derivation](Feedforward-algorithm-derivation.pdf)
 - [Backpropagation and training algorithms](Backpropagation-algorithm.pdf)
   + [Derivation](Backpropagation-algorithm-derivation.pdf)
+  + [A better error function: cross entropy](Cross-entropy-error-function-derivation.pdf)

@@ -6,7 +6,8 @@
 #   http://neuralnetworksanddeeplearning.com/index.html
 # This implements feedforward and backpropagation-based learning in a network
 # containing variable number of inputs, outputs, and hidden layers, with a
-# client-defined learning rate.
+# client-defined learning rate. This version also allows the client to choose
+# from two error heuristics: Euclidean distance and cross entropy.
 #
 # Note on notation:
 #   Since the code deals with various mathematical types (scalars, vectors,
@@ -24,6 +25,10 @@ from copy import deepcopy
 import numpy as np
 
 class NeuralNetwork(object):
+
+    # Constants to represent the error functions/heuristics supported
+    EUCLIDEAN_DISTANCE = "euclidean_distance"
+    CROSS_ENTROPY = "cross_entropy"
 
     class Layer(object):
         '''
@@ -49,8 +54,6 @@ class NeuralNetwork(object):
         first and last value in this list are thus the number of inputs and
         outputs of the network, respectively.) Values in this list must all be
         positive numbers, or an exception will be raised.
-
-        Also optionally provide `eta`, the learning rate.
 
         For testing purposes, also optionally provide `weights`, a list of
         initial weight matrices between each pair of layers. Each matrix
@@ -108,11 +111,12 @@ class NeuralNetwork(object):
             avs.append(av)
         return avs
 
-    def backpropagate(self, y, avs, eta):
+    def backpropagate(self, y, avs, eta, error_function):
         '''
         Compute error in the last layer from the correct label y, and
-        backpropagate that error using the list avs of activations from each
-        layer in the network (the result of feedforward(xv)).
+        backpropagate that error using: the list avs of activations from each
+        layer in the network (the result of feedforward(xv)), the learning
+        rate eta, and the error heuristic given by `error_function`.
 
         Refer to docs for the explanation of this algorithm, and for its
         derivation.
@@ -127,10 +131,14 @@ class NeuralNetwork(object):
         # This saves us from having to store the original inputs zv to sigmoid.
         sigmoid_prime = lambda sigmoid: sigmoid * (1 - sigmoid)
 
-        # Backpropagation algorithm
+        # Initialize vars based on the error function
         av = avs[-1]
-        dav_C = av - yv
-        dzv_C = dav_C * sigmoid_prime(av)
+        if error_function == NeuralNetwork.EUCLIDEAN_DISTANCE:
+            dav_C = av - yv
+            dzv_C = dav_C * sigmoid_prime(av)
+        elif error_function == NeuralNetwork.CROSS_ENTROPY:
+            dav_C = None    # does not need to be initialized
+            dzv_C = av - yv
         for i in reversed(range(1, self.L)):
             l = self.layers[i]
             av = avs[i]
@@ -152,7 +160,7 @@ class NeuralNetwork(object):
 
     # Public methods
 
-    def train(self, examples, eta=0.25, nd=1e-5, max_rounds=None):
+    def train(self, examples, error_function=CROSS_ENTROPY, eta=0.25, nd=1e-5, max_rounds=None):
         '''
         Trains the network using the list `examples` of training examples. This
         is a list of 2-tuples (training input, training label), where "training
@@ -160,11 +168,16 @@ class NeuralNetwork(object):
         inputs in the network, and "training label" is the correct
         classification for that input, indexed from 0.
 
-        Optionally provide `eta`, the learning rate.
+        Optionally specify the error (i.e. "loss") heuristic with the
+        `error_function` parameter. Valid values for this are the class
+        variables: EUCLIDEAN_DISTANCE (for Euclidean distance heuristic), or
+        CROSS_ENTROPY (for cross entropy heuristic).
 
-        Also optionally provide `nd` and/or `max_rounds`, the "negligible delta"
-        value and maximum number of rounds, respectively. If only `nd` is
-        specified, then the network trains until it "settles" within this
+        Also optionally provide `eta`, the learning rate.
+
+        Lastly, optionally provide `nd` and/or `max_rounds`, the "negligible
+        delta" value and maximum number of rounds, respectively. If only `nd`
+        is specified, then the network trains until it "settles" within this
         negligible delta: that is, it trains for as many rounds as necessary
         until the weights and biases change by no more than `nd` in a round. If
         `max_rounds` is also specified, then the network will train either until
@@ -185,16 +198,16 @@ class NeuralNetwork(object):
 
 
         # Helper functions
-        def train_one_round(examples):
+        def train_one_round():
             for xv, y in examples:
-                avs = self.feedforward(xv)       # feedforward xv
-                self.backpropagate(y, avs, eta)  # backpropagate error
+                avs = self.feedforward(xv)                       # feedforward xv
+                self.backpropagate(y, avs, eta, error_function)  # backpropagate error
 
-        def train_one_round_toward_settling(examples, nd):
+        def train_one_round_toward_settling():
             # Compare new weights/biases to old weights/biases. Return True
             # if we reached the settling point, False if not
             old_layers = deepcopy(self.layers)
-            train_one_round(examples)
+            train_one_round()
             settled = True
             for i in range(1, self.L):
                 W_old, bv_old = old_layers[i].W, old_layers[i].bv
@@ -209,19 +222,19 @@ class NeuralNetwork(object):
         if (nd != None) and (max_rounds != None):
             # Train until network settles at nd, or until we pass max_rounds
             for r in range(0, max_rounds):
-                settled = train_one_round_toward_settling(examples, nd)
+                settled = train_one_round_toward_settling()
                 if settled:
                     return
         elif nd != None:
             # Train until network settles at nd
             while True:
-                settled = train_one_round_toward_settling(examples, nd)
+                settled = train_one_round_toward_settling()
                 if settled:
                     return
         else:
             # Train for max_rounds rounds
             for r in range(0, max_rounds):
-                train_one_round(examples)
+                train_one_round()
 
 
 
