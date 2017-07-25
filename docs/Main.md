@@ -5,8 +5,16 @@ This is a small library implementing a simple neural network. It is originally b
 
 The goal of this project is not to provide a feature-rich, super efficient implementation of a neural network. Rather, it is to provide reference material for neural networks: the algorithms, their derivations, and a corresponding working implementation in code. In accordance with this goal, the code aims for clarity in presenting the algorithms rather than maximum efficiency. Namely, I leave out many optimizations for the sake of making the underlying algorithms clearer.
 
-## Features
-Currently, neural_network.py implements a network with:
+## Branches and versions
+
+There are multiple versions of the neural network, with each version adding more features and complexity. Each version is on its own branch:
+
+- **v1-basic**: A basic implementation of the neural network and its learning algorithm. Most notably, training consists of only one round of backpropagation (rather than many rounds, as would be necessary to fully train the network), for the sake of demonstrating the core algorithm.
+- **v2-train-until-settled**: Enhances training to incorporate multiple rounds of backpropagation, until the network "settles" (i.e. effectively stops learning). This was added in a separate version to avoid cluttering the core training algorithm with the logic that determines when to stop training. With this addition, this version is a fully functional neural network.
+- **v3-parametrized-error**: Improves the results of training by introducing a different error heuristic: cross entropy. To compare the results with the original heuristic, Euclidean distance, this version allows the client to choose which heuristic they want to use when training.
+
+## Features in this version
+This version implements a neural network with:
 
 - Variable number of inputs
 - Variable number of output classes
