@@ -19,12 +19,12 @@ Additionally, optionally provide `nd` and/or `max_rounds`, the "negligible delta
 
 Lastly, optionally set `manual_stop` to `True` to have training pause briefly every few rounds after stats are printed. While paused, you will have the opportunity to manually stop training. You can also use this in conjunction with `nd` and/or `max_rounds` to give training an automatic stopping point as well. If you do not set `nd` or `max_rounds`, you must set `manual_stop` to `True` or an exception will be raised (otherwise there would be no stopping point!).
 
-### `plot_error(start=1, end=self.last_round)`
+### `plot_error(start=1, end=None)`
 During training, the sum of error over all examples is recorded at each round. This function plots these measurements on a graph.
 
-Optionally specify the starting and ending rounds with `start` and `end`, respectively (rounds are indexed from 1).
+Optionally specify the starting and ending rounds with `start` and `end`, respectively (rounds are indexed from 1). Note the default value for `end` being `None` indicates that it plots up to the last round.
 
-### `plot_accuracy(start=1, end=self.last_round)`
+### `plot_accuracy(start=1, end=None)`
 Same as `plot_error()`, but it plots the accuracy rate of the network on all examples.
 
 ### `test(examples)`

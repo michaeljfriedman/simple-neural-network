@@ -11,4 +11,5 @@ if [ $# -ne 0 ]; then
   exit
 fi
 
-python -m unittest tests
+python -m unittest tests > __tmp.txt
+rm -f __tmp.txt

@@ -11,4 +11,5 @@ if ($args.Length -ne 0) {
 }
 
 # Run tests
-python -m unittest tests
+python -m unittest tests > __tmp.txt
+Remove-Item __tmp.txt

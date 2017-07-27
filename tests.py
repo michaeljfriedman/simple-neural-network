@@ -236,6 +236,18 @@ class TestTrainEuclideanDistance(unittest.TestCase):
     distance error function
     '''
 
+    def test_returns_num_rounds(self):
+        '''
+        Tests that train() returns the correct number of rounds of training.
+        '''
+        nn, W, bv = make_3_4()
+        xv = np.array([0.2, 0.3, 0.5])
+        y = 0
+        examples = [(xv, y)]
+
+        rounds = nn.train(examples, nd=None, max_rounds=10)
+        self.assertEqual(rounds, 10, 'nn.train() returns incorrect number of rounds')
+
     #-------------------------------------
     # Training on a network with only one
     # output (should yield no change)
@@ -649,7 +661,7 @@ class TestTrainCrossEntropy(unittest.TestCase):
         examples = [(xv1, y1), (xv2, y2)]
 
         av_new = np.array([0.65848101, 0.63172401, 0.54537277, 0.57967869])
-        y_new = 3
+        y_new = 0
 
         nn.train(examples, error_function=NeuralNetwork.CROSS_ENTROPY, eta=0.25, nd=None, max_rounds=2)
         np.testing.assert_allclose(nn.feedforward(xv1)[-1], av_new, atol=1e-8, err_msg='feedforward() incorrect')
@@ -675,6 +687,75 @@ class TestTrainCrossEntropy(unittest.TestCase):
         self.assertEqual(nn.classify(xv), y_new, 'classify() incorrect')
 
 
+class TestProgressStats(unittest.TestCase):
+    '''
+    Tests to make sure progress stats are computed correctly during training.
+    '''
+
+    def test_euclidean_distance_error(self):
+        '''
+        Tests that Euclidean distance error function is computed correctly.
+        '''
+        v = np.array([1, 1, 1])
+        w = np.array([0, 0, 0])
+        error = 1.5
+        np.testing.assert_almost_equal(NeuralNetwork.error(v, w, NeuralNetwork.EUCLIDEAN_DISTANCE),
+            error, decimal=7, err_msg='Cross entropy error computed incorrectly.')
+
+
+    def test_cross_entropy_error(self):
+        '''
+        Tests that cross entropy error function is computed correctly.
+        '''
+        v = np.array([0.2, 0.3, 0.5])
+        w = np.array([0.1, 0.15, 0.25])
+        error = -np.sum(w * np.log(v) + (1 - w) * np.log(1 - v))
+        np.testing.assert_almost_equal(NeuralNetwork.error(v, w, NeuralNetwork.CROSS_ENTROPY),
+            error, decimal=7, err_msg='Cross entropy error computed incorrectly.')
+
+    def test_error_stats_while_training(self):
+        '''
+        Tests that error stats are computed correctly during training.
+        '''
+        nn, _, _ = make_2_3_4()
+        xv = np.array([0.1, 0.2])
+        y = 0
+        examples = [(xv, y)]
+
+        errors = [2.3816226, 2.0046691, 1.7105535]
+        nn.train(examples, error_function=NeuralNetwork.CROSS_ENTROPY, nd=None, max_rounds=3)
+        np.testing.assert_allclose(nn.errors, errors, atol=1e-7, err_msg='nn.errors computed incorrectly')
+
+    def test_accuracy_stats_while_training(self):
+        '''
+        Tests that accuracy stats are computed correctly during training.
+        '''
+        nn, _, _ = make_2_3_2()
+        xv1 = np.array([0.1, 0.2])
+        y1 = 0
+        xv2 = np.array([0.01, 0.02])
+        y2 = 1
+        xv3 = np.array([0.3, 0.5])
+        y3 = 0
+        xv4 = np.array([0.03, 0.05])
+        y4 = 1
+        examples = [(xv1, y1), (xv2, y2), (xv3, y3), (xv4, y4)]
+
+        accuracies = ([0.5] * 37) + ([0.75] * 3)
+        nn.train(examples, error_function=NeuralNetwork.CROSS_ENTROPY, nd=None, max_rounds=40)
+        self.assertEqual(nn.accuracies, accuracies,'nn.accuracies computed incorrectly')
+
+    def test_num_rounds_stat_while_training(self):
+        '''
+        Tests that the last_round stat is computed correctly during training.
+        '''
+        nn, _, _ = make_2_3_4()
+        xv = np.array([0.1, 0.2])
+        y = 0
+        examples = [(xv, y)]
+
+        nn.train(examples, nd=None, max_rounds=3)
+        self.assertEqual(nn.last_round, 3, 'nn.last_round is incorrect')
 
 
 if __name__ == '__main__':

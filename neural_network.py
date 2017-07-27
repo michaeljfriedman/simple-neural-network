@@ -227,7 +227,7 @@ class NeuralNetwork(object):
 
         def record_and_print_stats(r):
             # Record total error
-            avs = [self.feedforward(xv) for xv, _ in examples]
+            avs = [self.feedforward(xv)[-1] for xv, _ in examples]
             yvs = [NeuralNetwork.basis_vector(y, self.layers[-1].n) for _, y in examples]
             error = sum([NeuralNetwork.error(av, yv, error_function) for av, yv in zip(avs, yvs)])
             self.errors.append(error)
@@ -284,7 +284,7 @@ class NeuralNetwork(object):
             return r
 
 
-    def plot_error(self, start=1, end=self.last_round):
+    def plot_error(self, start=1, end=None):
         '''
         During training, the sum of error over all examples is recorded at each
         round. This function plots these measurements on a graph. (...)
@@ -293,19 +293,23 @@ class NeuralNetwork(object):
         '''
         if self.last_round < 1:
             raise Exception('Network has not been trained yet!')
+        if end == None:
+            end = self.last_round
 
         actual_start = start - 1  # correct index to start at 0
         plt.plot(self.errors[actual_start:end])
         plt.show()
 
 
-    def plot_accuracy(self, start=1, end=self.last_round):
+    def plot_accuracy(self, start=1, end=None):
         '''
         Same as `plot_error()`, but it plots the accuracy rate of the network
         on all examples.
         '''
         if self.last_round < 1:
             raise Exception('Network has not been trained yet!')
+        if end == None:
+            end = self.last_round
 
         actual_start = start - 1  # correct index to start at 0
         plt.plot(self.accuracies[actual_start:end])
