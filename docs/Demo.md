@@ -31,15 +31,17 @@ Once you've created a network, you can train it on your training data. In additi
 The `train()` method takes training examples as a list of `(x, y)` tuples, where `x` is an input vector and `y` is the corresponding classification. So you must rearrange `training_xs` and `training_ys` into this format. Then you can train the network on this data:
 
 ```python
-training_data = [(training_xs[i], training_ys[i]) for i in range(0, len(training_xs))]
-nn.train(training_data)
+training_data = [(x, y) for x, y in zip(training_xs, training_ys)]
+rounds = nn.train(training_data)
 ```
+
+This will print progress stats as the network trains, and it will return the number of rounds the network trained for (stored in `rounds` in this example).
 
 ### Customizing the error function
 By default, `train()` uses cross entropy as its heuristic for measuring error between the network's output and the correct classifications. In most cases, this is a good heuristic that makes the network learn quickly. However, you can also set it to a different heuristic by setting the `error_function` parameter:
 
 ```python
-nn.train(training_data, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE)
+rounds = nn.train(training_data, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE)
 ```
 
 See the API reference page for a list of all the error functions you can choose from.
@@ -48,27 +50,35 @@ See the API reference page for a list of all the error functions you can choose 
 By default, `train()` uses a learning rate `eta` of 0.25. You can set this value higher to make the network learn "faster", or lower to make it learn "slower". Experiment with this value to see what works best for your network. In this example, we set a custom value of 0.05:
 
 ```python
-nn.train(training_data, eta=0.05)
+rounds = nn.train(training_data, eta=0.05)
 ```
 
 ### Customizing when to stop training
 By default, `train()` will train the network many times on a set of examples, until it "settles" (i.e. "stops" learning). More precisely, it trains until the weights and biases in the network change by no more than a delta of 1e-5 in one round. You can optionally customize this value by setting the `nd` (negligible delta) parameter in your call to `train()`. In this example, we set it to 1e-8, which imposes a stricter requirement for "settling".
 
 ```python
-nn.train(training_data, nd=1e-8)
+rounds = nn.train(training_data, nd=1e-8)
 ```
 
 However, making the value stricter comes at the expense of more rounds of training, so it can take a long time to run. To keep running time reasonable, you can also optionally specify the `max_rounds` value, which tells the network to stop training after `max_rounds` rounds if it has not reached the settling point yet. For example, this call tells the network to train until it "settles" at negligible delta of 1e-8, or until it passes 100,000 rounds:
 
 ```python
-nn.train(training_data, nd=1e-8, max_rounds=100000)
+rounds = nn.train(training_data, nd=1e-8, max_rounds=100000)
 ```
 
 Alternatively, you can just cut off the training after a fixed number of rounds by only setting `max_rounds`. **Note** that you must *explicitly* set `nd` to `None` for this to work; otherwise the default value will be used. In this example, we just train for 100,000 rounds:
 
 ```python
-nn.train(training_data, nd=None, max_rounds=100000)
+rounds = nn.train(training_data, nd=None, max_rounds=100000)
 ```
+
+You can also manually, interactively cut off the training (with or without setting `nd` and `max_rounds`) by setting the `manual_stop` parameter to `True`:
+
+```python
+rounds = nn.train(training_data, manual_stop=True)
+```
+
+This will pause training briefly every few rounds after reporting the progress stats, and allow you to stop if you feel that the network is performing well enough.
 
 ## Testing a network
 Testing has a very similar structure to training. In this example, `testing_data` is a list of `(x, y)` tuples, in the same format as `training_data` from the last section. To test on this data:
@@ -105,7 +115,7 @@ nn = NeuralNetwork(layers=[240, 10, 10, 2])
 
 # Train the network
 training_data = [(training_xs[i], training_ys[i]) for i in range(0, len(training_xs))]
-nn.train(training_data, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.05, nd=1e-8, max_rounds=100000)
+rounds = nn.train(training_data, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.05, nd=1e-8, max_rounds=100000)
 
 # Test the network
 # Note: testing_data would be constructed in a similar manner to training_data

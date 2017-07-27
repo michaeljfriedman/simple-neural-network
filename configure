@@ -46,7 +46,7 @@ fi
 source venv/bin/activate
 
 echo "----- Installing Python packages -----"
-pip install numpy
+pip install numpy matplotlib
 echo "----- Done installing Python packages -----"
 
 deactivate

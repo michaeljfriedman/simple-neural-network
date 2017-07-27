@@ -28,7 +28,12 @@ in a Bash shell (Linux/Mac) or:
 in PowerShell (Windows) for instructions on its usage. Read on for details on the project's dependencies.
 
 ### Dependencies
-This project is written in Python 2.7, and it currently requires only Numpy (Python vector/matrix algebra package) for vector/matrix computation in neural_network.py. If you already have this installed or would rather just install it yourself, you don't need the `configure` script. It's only here as a convenience.
+This project is written in Python 2.7, and it requires the following Python packages:
+
+- Numpy: vector/matrix algebra package, used for network computations
+- Matplotlib: data plotting library, used to plot network training progress
+
+If you already have these installed or would rather just install it yourself, you don't need the `configure` script. It's only here as a convenience.
 
 ## Documentation
 For more details, see the [project documentation](docs/README.md).

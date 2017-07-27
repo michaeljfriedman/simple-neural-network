@@ -12,6 +12,7 @@ There are multiple versions of the neural network, with each version adding more
 - **v1-basic**: A basic implementation of the neural network and its learning algorithm. Most notably, training consists of only one round of backpropagation (rather than many rounds, as would be necessary to fully train the network), for the sake of demonstrating the core algorithm.
 - **v2-train-until-settled**: Enhances training to incorporate multiple rounds of backpropagation, until the network "settles" (i.e. effectively stops learning). This was added in a separate version to avoid cluttering the core training algorithm with the logic that determines when to stop training. With this addition, this version is a fully functional neural network.
 - **v3-parametrized-error**: Improves the results of training by introducing a different error heuristic: cross entropy. To compare the results with the original heuristic, Euclidean distance, this version allows the client to choose which heuristic they want to use when training.
+- **v4-extra-tools**: No new algorithmic features are added in this version; it simply adds some convenience tools (save/load a network, visualize error over the course of training, etc.).
 
 ## Features in this version
 This version implements a neural network with:
@@ -26,3 +27,8 @@ This version implements a neural network with:
 - Training until the network settles at an optimum
 
 You can train the network with training data, test it with testing data to get an accuracy rate, and then use it to classify new data.
+
+It also includes some other useful tools:
+
+- Save/load a network to/from a file
+- Plot error over the course of training

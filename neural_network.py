@@ -22,6 +22,8 @@
 #-------------------------------------------------------------------------------
 
 from copy import deepcopy
+from time import sleep
+import matplotlib.pyplot as plt
 import numpy as np
 
 class NeuralNetwork(object):
@@ -53,13 +55,9 @@ class NeuralNetwork(object):
         indicating the number of neurons in each layer of the network. (The
         first and last value in this list are thus the number of inputs and
         outputs of the network, respectively.) Values in this list must all be
-        positive numbers, or an exception will be raised.
+        positive numbers, or an exception will be raised. (...)
 
-        For testing purposes, also optionally provide `weights`, a list of
-        initial weight matrices between each pair of layers. Each matrix
-        corresponds to the weights applied to the *second* layer in the pair.
-        Similarly, provide `biases`, the corresponding list of initial bias
-        vectors.
+        (see docs/API.md for full description)
         '''
         # Validate parameters
         for n in layers:
@@ -82,10 +80,24 @@ class NeuralNetwork(object):
         # Place info into list of Layer containers
         self.layers = [NeuralNetwork.Layer(layers[0], None, None)] + [NeuralNetwork.Layer(layers[i], weights[i-1], biases[i-1]) for i in range(1, len(layers))]
 
+        # Stats to be recorded at each round of training
+        self.errors = []
+        self.accuracies = []
+        self.last_round = 0
+
 
     #---------------------------------------------------------------------------
 
     # Helper methods
+
+    @staticmethod
+    def basis_vector(i, n):
+        '''
+        Returns the standard basis vector e_i with n dimensions as a np array.
+        '''
+        v = np.zeros(n)
+        v[i] = 1
+        return v
 
     @staticmethod
     def sigmoid(x):
@@ -94,6 +106,17 @@ class NeuralNetwork(object):
         np array x.
         '''
         return 1 / (1 + np.exp(-x))
+
+    @staticmethod
+    def error(av, yv, error_function):
+        '''
+        Returns the error between the activation av and correct output yv
+        for the heuristic given by error_function.
+        '''
+        if error_function == NeuralNetwork.EUCLIDEAN_DISTANCE:
+            return 0.5 * np.linalg.norm(av - yv)**2
+        elif error_function == NeuralNetwork.CROSS_ENTROPY:
+            return -np.sum(yv * np.log(av) + (1 - yv) * np.log(1 - av))
 
     def feedforward(self, xv):
         '''
@@ -122,8 +145,7 @@ class NeuralNetwork(object):
         derivation.
         '''
         # Convert y to vector form
-        yv = np.zeros(self.layers[-1].n)
-        yv[y] = 1
+        yv = NeuralNetwork.basis_vector(y, self.layers[-1].n)
 
         # Definition of sigmoid_prime
         # NOTE: Since sigmoid_prime can be evaluated in terms of sigmoid, I
@@ -160,30 +182,16 @@ class NeuralNetwork(object):
 
     # Public methods
 
-    def train(self, examples, error_function=CROSS_ENTROPY, eta=0.25, nd=1e-5, max_rounds=None):
+    def train(self, examples, error_function=CROSS_ENTROPY, eta=0.25, nd=1e-5, max_rounds=None, manual_stop=False):
         '''
         Trains the network using the list `examples` of training examples. This
         is a list of 2-tuples (training input, training label), where "training
         input" is a vector (`np.array`) with the same length as the number of
         inputs in the network, and "training label" is the correct
-        classification for that input, indexed from 0.
+        classification for that input, indexed from 0. Returns the number of
+        rounds the network trained for. (...)
 
-        Optionally specify the error (i.e. "loss") heuristic with the
-        `error_function` parameter. Valid values for this are the class
-        variables: EUCLIDEAN_DISTANCE (for Euclidean distance heuristic), or
-        CROSS_ENTROPY (for cross entropy heuristic).
-
-        Also optionally provide `eta`, the learning rate.
-
-        Lastly, optionally provide `nd` and/or `max_rounds`, the "negligible
-        delta" value and maximum number of rounds, respectively. If only `nd`
-        is specified, then the network trains until it "settles" within this
-        negligible delta: that is, it trains for as many rounds as necessary
-        until the weights and biases change by no more than `nd` in a round. If
-        `max_rounds` is also specified, then the network will train either until
-        it settles or until it passes `max_rounds` rounds. If only `max_rounds`
-        is specified, then the network will just train for that fixed number of
-        rounds.
+        (see docs/API.md for full description)
         '''
         # Validate parameters
         for xv, _ in examples:
@@ -217,25 +225,91 @@ class NeuralNetwork(object):
                     break
             return settled
 
+        def record_and_print_stats(r):
+            # Record total error
+            avs = [self.feedforward(xv) for xv, _ in examples]
+            yvs = [NeuralNetwork.basis_vector(y, self.layers[-1].n) for _, y in examples]
+            error = sum([NeuralNetwork.error(av, yv, error_function) for av, yv in zip(avs, yvs)])
+            self.errors.append(error)
+
+            # Record accuracy
+            accuracy = self.test(examples)
+            self.accuracies.append(accuracy)
+
+            self.last_round = r
+
+            # Print stats for this round
+            print '%6d | %15.10f | %15.10f' % (r, error, accuracy)
+
+        def ask_to_stop(r):
+            # Pause and ask user if they want to stop every 5th round, if manual
+            # stop is enabled. Return True if user stops training, False if not.
+            round_interval = 5
+            pause_time = 5
+            if manual_stop and (r % round_interval == 0):
+                print '[PAUSE] Press Ctrl-C to stop training, or wait 5 seconds to continue'
+                try:
+                    sleep(pause_time)
+                except KeyboardInterrupt:
+                    return True
+            return False
+
 
         # Train over all rounds
+        print '%6s | %15s | %15s' % ('Round', 'Error', 'Accuracy')
+        print '-' * 42
         if (nd != None) and (max_rounds != None):
             # Train until network settles at nd, or until we pass max_rounds
-            for r in range(0, max_rounds):
+            for r in range(1, max_rounds+1):
                 settled = train_one_round_toward_settling()
-                if settled:
-                    return
+                record_and_print_stats(r)
+                if ask_to_stop(r): return r
+                if settled: return r
+            return r
         elif nd != None:
             # Train until network settles at nd
+            r = 1
             while True:
                 settled = train_one_round_toward_settling()
-                if settled:
-                    return
+                record_and_print_stats(r)
+                if ask_to_stop(r): return r
+                if settled: return r
+                r += 1
         else:
             # Train for max_rounds rounds
-            for r in range(0, max_rounds):
+            for r in range(1, max_rounds+1):
                 train_one_round()
+                record_and_print_stats(r)
+                if ask_to_stop(r): return r
+            return r
 
+
+    def plot_error(self, start=1, end=self.last_round):
+        '''
+        During training, the sum of error over all examples is recorded at each
+        round. This function plots these measurements on a graph. (...)
+
+        (see docs/API.md for full description)
+        '''
+        if self.last_round < 1:
+            raise Exception('Network has not been trained yet!')
+
+        actual_start = start - 1  # correct index to start at 0
+        plt.plot(self.errors[actual_start:end])
+        plt.show()
+
+
+    def plot_accuracy(self, start=1, end=self.last_round):
+        '''
+        Same as `plot_error()`, but it plots the accuracy rate of the network
+        on all examples.
+        '''
+        if self.last_round < 1:
+            raise Exception('Network has not been trained yet!')
+
+        actual_start = start - 1  # correct index to start at 0
+        plt.plot(self.accuracies[actual_start:end])
+        plt.show()
 
 
     def test(self, examples):

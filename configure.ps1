@@ -45,7 +45,7 @@ if (!(Test-Path venv)) {
 .\venv\Scripts\activate.ps1
 
 Write-Host "----- Installing Python packages -----"
-pip install numpy
+pip install numpy matplotlib
 Write-Host "----- Done installing Python packages -----"
 
 deactivate
