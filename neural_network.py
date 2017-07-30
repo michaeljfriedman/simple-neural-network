@@ -213,8 +213,8 @@ class NeuralNetwork(object):
             raise ValueError('nd must be positive')
         if (max_rounds != None) and (max_rounds <= 0):
             raise ValueError('max_rounds must be positive')
-        if (nd == None) and (max_rounds == None):
-            raise ValueError('One of nd or max_rounds must be set')
+        if (nd == None) and (max_rounds == None) and (not manual_stop):
+            raise ValueError('At least one of nd, max_rounds, or manual_stop must be set')
 
 
         # Helper functions

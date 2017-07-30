@@ -131,8 +131,8 @@ from neural_network import NeuralNetwork
 nn = NeuralNetwork(layers=[240, 10, 10, 2])
 
 # Train the network
-training_data = [(training_xs[i], training_ys[i]) for i in range(0, len(training_xs))]
-rounds = nn.train(training_data, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.05, nd=1e-8, max_rounds=100000)
+training_data = [(x, y) for x, y in zip(training_xs, training_ys)]
+rounds = nn.train(training_data, error_function=NeuralNetwork.EUCLIDEAN_DISTANCE, eta=0.05, nd=1e-8, max_rounds=100000, manual_stop=True)
 
 # Test the network
 # Note: testing_data would be constructed in a similar manner to training_data
