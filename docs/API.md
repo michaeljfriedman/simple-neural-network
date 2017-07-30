@@ -1,7 +1,7 @@
 # API Reference
 ([Back to contents](README.md))
 
-## Class: `NeuralNetwork`
+## Instance methods
 
 ### `__init__(layers, weights=None, biases=None)`
 Initializes the NeuralNetwork given `layers`, a list of integers indicating the number of neurons in each layer of the network. (The first and last value in this list are thus the number of inputs and outputs of the network, respectively.) Values in this list must all be positive numbers, or an exception will be raised.
@@ -33,8 +33,11 @@ Tests the network on the list `examples`, which has the same format as the list 
 ### `classify(xv)`
 Returns the classification chosen by the network for input `xv` (the index of the output with highest probability, indexed from 0).
 
-### `save(filename)`
-Saves the network to the file `filename` (provide a string name).
+
+## Static methods
+
+### `save(nn, filename)`
+Saves the `NeuralNetwork` instance `nn` to the file `filename` (provide a string name).
 
 ### `load(filename)`
 Loads a network from the file `filename` (provide a string name). Returns the `NeuralNetwork` object loaded.

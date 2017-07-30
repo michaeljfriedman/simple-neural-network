@@ -80,6 +80,7 @@ rounds = nn.train(training_data, manual_stop=True)
 
 This will pause training briefly every few rounds after reporting the progress stats, and allow you to stop if you feel that the network is performing well enough.
 
+
 ## Testing a network
 Testing has a very similar structure to training. In this example, `testing_data` is a list of `(x, y)` tuples, in the same format as `training_data` from the last section. To test on this data:
 
@@ -100,13 +101,29 @@ print 'Classification =', y
 This prints the classification `y` determined by the network, an integer from 0 to *number of output neurons* - 1. In this case, it's a 0 or 1, since there are 2 outputs in this network.
 
 
-## Full example: create, train, test, and classify
+## Saving/loading a network
+You can save a network to a .pickle file:
+
+```python
+NeuralNetwork.save(nn, 'network.pickle')
+```
+
+Or load from one:
+
+```python
+nn = NeuralNetwork.load('network.pickle')
+```
+
+This allows you to store a model, so you can finish your script without having to rebuild/retrain the model again next time.
+
+## Full example: create, train, test, classify, and save
 For completeness, here we put everything together from the previous sections, so you can see the full flow. The following snippet:
 
 - Creates the network from the second example under **Creating a network**
 - Trains it on the data `training_xs` and `training_ys` from **Training a network**, customizing all of the `train()` parameters.
 - Tests it on `testing_data` from **Testing a network**
 - Classifies the input `x` from **Classifying data**
+- Saves the network to the file network.pickle
 
 ```python
 # Create the network
@@ -125,11 +142,18 @@ print 'Accuracy rate =', accuracy
 # Classify an input
 y = nn.classify(x)
 print 'Classification =', y
+
+# Save the network to file
+NeuralNetwork.save(nn, 'network.pickle')
 ```
 
-Example stdout:
+Example stdout (progress statistics are abbreviated, indicated by the ellipses):
 
 ```
+ Round |           Error |        Accuracy
+------------------------------------------
+     1 |    3.3695937696 |    0.2500000000
+...
 Accuracy rate = 0.997
 Classification = 0
 ```

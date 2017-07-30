@@ -7,6 +7,7 @@
 
 from neural_network import NeuralNetwork
 import numpy as np
+import os
 import unittest
 
 # Some helper functions to make preset neural networks
@@ -756,6 +757,43 @@ class TestProgressStats(unittest.TestCase):
 
         nn.train(examples, nd=None, max_rounds=3)
         self.assertEqual(nn.last_round, 3, 'nn.last_round is incorrect')
+
+
+class TestSaveLoad(unittest.TestCase):
+    '''
+    Tests for the save() and load() methods
+    '''
+
+    def test_save_load_success(self):
+        '''
+        Tests that a NeuralNetwork saved to a file can be loaded back again
+        to the same object.
+        '''
+        nn, _, _ = make_3_4()
+        filename = '__tmp.pickle'
+        NeuralNetwork.save(nn, filename)
+        nn2 = NeuralNetwork.load(filename)
+        self.assertEqual(nn2, nn, 'NeuralNetwork loaded from file does not match original')
+        os.remove(filename)
+
+    def test_save_load_failure(self):
+        '''
+        Tests that a NeuralNetwork that's modified after being saved to a
+        file is different from the saved one.
+        '''
+        nn, _, _ = make_3_4()
+        filename = '__tmp.pickle'
+        NeuralNetwork.save(nn, filename)
+
+        # Modify nn
+        xv = np.array([0.2, 0.3, 0.5])
+        y = 3
+        examples = [(xv, y)]
+        nn.train(examples, nd=None, max_rounds=1)
+
+        nn2 = NeuralNetwork.load(filename)
+        self.assertNotEqual(nn2, nn, 'NeuralNetwork saved to disk is the same as the original *after* modifying the original')
+        os.remove(filename)
 
 
 if __name__ == '__main__':

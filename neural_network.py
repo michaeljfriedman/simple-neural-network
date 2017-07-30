@@ -23,6 +23,7 @@
 
 from copy import deepcopy
 from time import sleep
+import cPickle
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -31,23 +32,6 @@ class NeuralNetwork(object):
     # Constants to represent the error functions/heuristics supported
     EUCLIDEAN_DISTANCE = "euclidean_distance"
     CROSS_ENTROPY = "cross_entropy"
-
-    class Layer(object):
-        '''
-        Container for attributes of each layer
-        '''
-
-        def __init__(self, n, W, bv):
-            '''
-            Sets attributes of this layer: `n` the number of neurons, `W` the
-            matrix of weights coming *in* to this layer, `bv` the vector of
-            biases coming *in* to this layer.
-            '''
-            self.n = n
-            self.W = W
-            self.bv = bv
-
-    #---------------------------------------------------------------------------
 
     def __init__(self, layers, weights=None, biases=None):
         '''
@@ -77,13 +61,39 @@ class NeuralNetwork(object):
         if not biases:
             biases = [np.random.rand(layers[i+1],) for i in range(0, len(layers)-1)]
 
-        # Place info into list of Layer containers
-        self.layers = [NeuralNetwork.Layer(layers[0], None, None)] + [NeuralNetwork.Layer(layers[i], weights[i-1], biases[i-1]) for i in range(1, len(layers))]
+        # Layers are represented by tuples:
+        #   (number of neurons, weight matrix, bias vector)
+        # Populate these layer tuples, store in a list
+        self.layers = [(layers[0], None, None)] + [(layers[i], weights[i-1], biases[i-1]) for i in range(1, len(layers))]
 
         # Stats to be recorded at each round of training
         self.errors = []
         self.accuracies = []
         self.last_round = 0
+
+
+    # Required for testing
+
+    def __eq__(self, other):
+        '''
+        Defines equality
+        '''
+        if not isinstance(other, self.__class__): return False
+        if self.L != other.L: return False
+        if self.errors != other.errors: return False
+        if self.accuracies != other.accuracies: return False
+        if self.last_round != other.last_round: return False
+        for (n1, W1, bv1), (n2, W2, bv2) in zip(self.layers, other.layers):
+            if n1 != n2: return False
+            if not np.array_equal(W1, W2): return False
+            if not np.array_equal(bv1, bv2): return False
+        return True
+
+    def __ne__(self, other):
+        '''
+        Defines inequality
+        '''
+        return not (self == other)
 
 
     #---------------------------------------------------------------------------
@@ -127,9 +137,9 @@ class NeuralNetwork(object):
         '''
         av = xv
         avs = [av]
-        for l in self.layers[1:]:
+        for _, W, bv in self.layers[1:]:
             # Compute activation vector at this layer
-            zv = l.W.dot(av) + l.bv
+            zv = W.dot(av) + bv
             av = NeuralNetwork.sigmoid(zv)
             avs.append(av)
         return avs
@@ -145,7 +155,8 @@ class NeuralNetwork(object):
         derivation.
         '''
         # Convert y to vector form
-        yv = NeuralNetwork.basis_vector(y, self.layers[-1].n)
+        n, _, _ = self.layers[-1]
+        yv = NeuralNetwork.basis_vector(y, n)
 
         # Definition of sigmoid_prime
         # NOTE: Since sigmoid_prime can be evaluated in terms of sigmoid, I
@@ -162,7 +173,7 @@ class NeuralNetwork(object):
             dav_C = None    # does not need to be initialized
             dzv_C = av - yv
         for i in reversed(range(1, self.L)):
-            l = self.layers[i]
+            _, W, bv = self.layers[i]
             av = avs[i]
             av_prev = avs[i-1]
 
@@ -171,12 +182,12 @@ class NeuralNetwork(object):
             delta_W = -eta * np.outer(dzv_C, av_prev)
 
             # Compute new intermediary derivatives
-            dav_C = np.transpose(l.W).dot(dzv_C)
+            dav_C = np.transpose(W).dot(dzv_C)
             dzv_C = dav_C * sigmoid_prime(av_prev)
 
             # Adjust biases and weights by their deltas
-            l.bv += delta_bv
-            l.W += delta_W
+            bv += delta_bv
+            W += delta_W
 
     #---------------------------------------------------------------------------
 
@@ -195,7 +206,8 @@ class NeuralNetwork(object):
         '''
         # Validate parameters
         for xv, _ in examples:
-            if xv.shape != (self.layers[0].n,):
+            n, _, _ = self.layers[0]
+            if xv.shape != (n,):
                 raise ValueError('Training inputs must be the same length as the number of inputs in the network')
         if (nd != None) and (nd <= 0):
             raise ValueError('nd must be positive')
@@ -218,8 +230,8 @@ class NeuralNetwork(object):
             train_one_round()
             settled = True
             for i in range(1, self.L):
-                W_old, bv_old = old_layers[i].W, old_layers[i].bv
-                W, bv = self.layers[i].W, self.layers[i].bv
+                _, W_old, bv_old = old_layers[i]
+                _, W, bv = self.layers[i]
                 if np.any(np.abs(W - W_old) > nd) or np.any(np.abs(bv - bv_old) > nd):
                     settled = False
                     break
@@ -227,8 +239,9 @@ class NeuralNetwork(object):
 
         def record_and_print_stats(r):
             # Record total error
+            n, _, _ = self.layers[-1]
             avs = [self.feedforward(xv)[-1] for xv, _ in examples]
-            yvs = [NeuralNetwork.basis_vector(y, self.layers[-1].n) for _, y in examples]
+            yvs = [NeuralNetwork.basis_vector(y, n) for _, y in examples]
             error = sum([NeuralNetwork.error(av, yv, error_function) for av, yv in zip(avs, yvs)])
             self.errors.append(error)
 
@@ -324,7 +337,8 @@ class NeuralNetwork(object):
         '''
         # Validate length of inputs/outputs in examples
         for xv, _ in examples:
-            if len(xv.shape) != 1 and xv.shape != (self.layers[0].n,):
+            n, _, _ = self.layers[0]
+            if xv.shape != (n,):
                 raise ValueError('Training inputs must be the same length as the number of inputs in the network')
 
         # Test over all examples
@@ -349,3 +363,15 @@ class NeuralNetwork(object):
                 max_value = yv[i]
                 max_index = i
         return max_index
+
+
+    @staticmethod
+    def save(nn, filename):
+        with open(filename, 'wb') as f:
+            cPickle.dump(nn, f)
+
+
+    @staticmethod
+    def load(filename):
+        with open(filename, 'rb') as f:
+            return cPickle.load(f)
