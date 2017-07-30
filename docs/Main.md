@@ -14,6 +14,14 @@ There are multiple versions of the neural network, with each version adding more
 - **v3-parametrized-error**: Improves the results of training by introducing a different error heuristic: cross entropy. To compare the results with the original heuristic, Euclidean distance, this version allows the client to choose which heuristic they want to use when training.
 - **v4-extra-tools**: No new algorithmic features are added in this version; it simply adds some convenience tools (save/load a network, visualize error over the course of training, etc.).
 
+I tried to implement each version to demonstrate building up the features of this data structure in manageable parts (again, aiming to make good reference material). You can utilize the diffs between versions of neural_network.py to see how new features are implemented. For instance, run:
+
+```
+git diff v1-basic v2-train-until-settled
+```
+
+This way you can highlight the additions to the basic algorithm that implement "settling". You can do the same for other versions to see how they were implemented.
+
 ## Features in this version
 This version implements a neural network with:
 
