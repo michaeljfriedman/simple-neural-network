@@ -367,11 +367,19 @@ class NeuralNetwork(object):
 
     @staticmethod
     def save(nn, filename):
+        '''
+        Saves the `NeuralNetwork` instance `nn` to the file `filename`
+        (provide a string name).
+        '''
         with open(filename, 'wb') as f:
             cPickle.dump(nn, f)
 
 
     @staticmethod
     def load(filename):
+        '''
+        Loads a network from the file `filename` (provide a string name).
+        Returns the `NeuralNetwork` object loaded.
+        '''
         with open(filename, 'rb') as f:
             return cPickle.load(f)
